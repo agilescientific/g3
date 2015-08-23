@@ -3,3 +3,5 @@
 /.tmp
 /.sass-cache
 /bower_components
+.DS_Store
+.ipynb_checkpoints
