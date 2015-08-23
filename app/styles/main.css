@@ -4,16 +4,17 @@ body {
 
 svg {
   position: relative;
-
 }
 
 canvas {
   position: absolute;
 }
 
-.seis_canvas{
-    top: 56px;
-    left: 56px;
+.input-group {
+  padding-bottom: 5px;
+}
+.tick line{
+    opacity: 0.1;
 }
 
 .axis text {
@@ -22,6 +23,7 @@ canvas {
 
 .axis path,
 .axis line {
+  stroke-width: 1;
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;

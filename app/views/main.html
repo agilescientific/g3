@@ -1,3 +1,26 @@
-<div class="col-xs-12 well" id="seis_plot">
-
+<div class="col-xs-12">
+  <div class="col-xs-12 seis_plot g3_plot well">
+    <div class="col-xs-6">
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">Width</span>
+        <input type="number" class="form-control" ng-model="width" aria-describedby="basic-addon1">
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">Height</span>
+        <input type="number" class="form-control wheelable" ng-model="height" aria-describedby="basic-addon1">
+      </div>
+    </div>
+    <div class="col-xs-6">
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">Gain</span>
+        <input type="number" class="form-control" ng-model="gain" aria-describedby="basic-addon1">
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">Skip</span>
+        <input type="number" class="form-control" ng-model="skip" aria-describedby="basic-addon1">
+      </div>
+    </div>
+    <input type="submit" ng-click="update()" class="btn button-default col-xs-4 col-xs-offset-4"/>
+  </div>
+  <!-- <div class="col-xs-6 seis_plot2 g3_plot well"></div> -->
 </div>
