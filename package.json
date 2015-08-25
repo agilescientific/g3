@@ -1,0 +1,27 @@
+{
+  "name": "g3",
+  "version": "0.0.1",
+  "description": "Geophysics D3 Library",
+  "main": "Gruntfile.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agile-geoscience/g3.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-qunit": "~0.1.1",
+    "grunt-contrib-concat": "~0.1.3",
+    "grunt-contrib-uglify": "~0.1.2"
+  },
+  "author": "justinkheisler",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/agile-geoscience/g3/issues"
+  },
+  "homepage": "https://github.com/agile-geoscience/g3#readme"
+}
