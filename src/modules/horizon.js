@@ -9,7 +9,7 @@ g3.horizon = function(options, plot, data){
 	horizon.xMin = plot.xDomain[0];
 	horizon.yInt = 1;
 	horizon.yMin = plot.yDomain[0];
-	
+
 	if(options){
 		if(options.interpolate){ horizon.interpolate = options.interpolate; }
 		if(options.xInt){ horizon.xInt = options.xInt; }
@@ -38,11 +38,18 @@ g3.horizon = function(options, plot, data){
 			})
 			.interpolate(this.interpolate);
 
-		plot.svg.append('svg:path')
+		this.svg = plot.svg.append('svg:path')
 			.attr('d', lineFunc(data))
 			.attr('stroke', 'blue')
 			.attr('stroke-width', 2)
 			.attr('fill', 'none');
+		return this;
+	}
+
+	horizon.reDraw = function(){
+		this.svg.transition()
+			.duration(600)
+			.attr('d', lineFunc(data));
 		return this;
 	}
 

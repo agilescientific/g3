@@ -8,6 +8,8 @@ g3.plot = function(options, elem){
 	plot.height = 800;
 	plot.xDomain = [0,0];
 	plot.yDomain = [0,0];
+	plot.elem = elem;
+	plot.axisVisible = true;
 
 	if(options){
 	  if(options.margin){ plot.margin = options.margin; }
@@ -42,6 +44,11 @@ g3.plot = function(options, elem){
   	return this;
   }
 
+  plot.toggleAxis = function(bool){
+  	this.axisVisible = bool;
+  	return this;
+  }
+
   plot.draw = function() {
 	  // Set x y scales
 	  this.xScale = d3.scale.linear()
@@ -64,6 +71,11 @@ g3.plot = function(options, elem){
 	    .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
 	  // Create and append SVG axis
+	  if(!this.axisVisible){ 
+	  	this.yAxis.tickFormat(""); 
+	  	this.yAxis.outerTickSize(0);
+	  }
+
 	  this.svg.append('g')
 	    .attr('class', 'x axis')
 	    .call(this.xAxis);

@@ -32,7 +32,7 @@ g3.horizon = function(options, plot, data){
 	horizon.xMin = plot.xDomain[0];
 	horizon.yInt = 1;
 	horizon.yMin = plot.yDomain[0];
-	
+
 	if(options){
 		if(options.interpolate){ horizon.interpolate = options.interpolate; }
 		if(options.xInt){ horizon.xInt = options.xInt; }
@@ -61,11 +61,18 @@ g3.horizon = function(options, plot, data){
 			})
 			.interpolate(this.interpolate);
 
-		plot.svg.append('svg:path')
+		this.svg = plot.svg.append('svg:path')
 			.attr('d', lineFunc(data))
 			.attr('stroke', 'blue')
 			.attr('stroke-width', 2)
 			.attr('fill', 'none');
+		return this;
+	}
+
+	horizon.reDraw = function(){
+		this.svg.transition()
+			.duration(600)
+			.attr('d', lineFunc(data));
 		return this;
 	}
 
@@ -117,25 +124,30 @@ g3.log = function(options, plot, data){
 	}
 
 	log.draw = function(){
-		var lineFunc = d3.svg.line()
-			.x(function (d) {
-				return plot.xScale(d);
-			})
-			.y(function (d, i){
-				return plot.yScale(i * log.yInt + log.yMin);
-			})
-			.interpolate('basis');
-		plot.svg.append("svg:path")
+		this.svg = plot.svg.append("path")  
 			.attr("d", lineFunc(data))
 			.attr("stroke", "blue")
 			.attr("stroke-width", 0.25)
 			.attr("fill", "none");
 		return this;
-	};
-
-	log.reDraw = function(){
-
 	}
+
+	var lineFunc = d3.svg.line()
+	.x(function (d) {
+		return plot.xScale(d);
+	})
+	.y(function (d, i){
+		return plot.yScale(i * log.yInt + log.yMin);
+	})
+	.interpolate('basis');
+
+	log.reDraw = function(data){
+		this.svg.transition()
+			.duration(600)
+			.attr('d', lineFunc(data));
+		return this;
+	}
+
 	return log;
 }
 
@@ -149,6 +161,8 @@ g3.plot = function(options, elem){
 	plot.height = 800;
 	plot.xDomain = [0,0];
 	plot.yDomain = [0,0];
+	plot.elem = elem;
+	plot.axisVisible = true;
 
 	if(options){
 	  if(options.margin){ plot.margin = options.margin; }
@@ -183,6 +197,11 @@ g3.plot = function(options, elem){
   	return this;
   }
 
+  plot.toggleAxis = function(bool){
+  	this.axisVisible = bool;
+  	return this;
+  }
+
   plot.draw = function() {
 	  // Set x y scales
 	  this.xScale = d3.scale.linear()
@@ -205,6 +224,11 @@ g3.plot = function(options, elem){
 	    .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
 	  // Create and append SVG axis
+	  if(!this.axisVisible){ 
+	  	this.yAxis.tickFormat(""); 
+	  	this.yAxis.outerTickSize(0);
+	  }
+
 	  this.svg.append('g')
 	    .attr('class', 'x axis')
 	    .call(this.xAxis);

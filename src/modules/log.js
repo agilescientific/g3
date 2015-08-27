@@ -43,21 +43,29 @@ g3.log = function(options, plot, data){
 	}
 
 	log.draw = function(){
-		var lineFunc = d3.svg.line()
-			.x(function (d) {
-				return plot.xScale(d);
-			})
-			.y(function (d, i){
-				return plot.yScale(i * log.yInt + log.yMin);
-			})
-			.interpolate('basis');
-		plot.svg.append("svg:path")
+		this.svg = plot.svg.append("path")  
 			.attr("d", lineFunc(data))
 			.attr("stroke", "blue")
 			.attr("stroke-width", 0.25)
 			.attr("fill", "none");
 		return this;
-	};
+	}
+
+	var lineFunc = d3.svg.line()
+	.x(function (d) {
+		return plot.xScale(d);
+	})
+	.y(function (d, i){
+		return plot.yScale(i * log.yInt + log.yMin);
+	})
+	.interpolate('basis');
+
+	log.reDraw = function(data){
+		this.svg.transition()
+			.duration(600)
+			.attr('d', lineFunc(data));
+		return this;
+	}
 
 	return log;
 }
