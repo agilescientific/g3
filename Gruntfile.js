@@ -13,7 +13,7 @@ module.exports = function(grunt) {
   var LIBRARY_NAME = 'g3';
 
   var MODULE_LIST = [
-      sub('src/modules/wiggle.js')
+      sub('src/modules/*.js')
     ];
 
   var DIST_HEAD_LIST = [

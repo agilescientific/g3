@@ -1,0 +1,38 @@
+g3.log = function(options, plot, data){
+	var log = {};
+	log.yInt = 1;
+	log.yMin = plot.yDomain[0];
+
+	if(options){
+		if(options.yInt){ log.yInt = options.zInt; }
+		if(options.yMin){ log.yMin = options.yMin; }
+	}
+
+	log.setYInt = function(yInt){
+		this.yInt = yInt;
+		return this;
+	}
+
+	log.setYMin = function(yMin){
+		this.yMin = yMin;
+		return this;
+	}
+
+	log.draw = function() {
+		var lineFunc = d3.svg.line()
+			.x(function (d) {
+				return plot.xScale(d);
+			})
+			.y(function (d, i){
+				return plot.yScale(i * log.yInt + log.yMin);
+			})
+			.interpolate('basis');
+		plot.svg.append("svg:path")
+			.attr("d", lineFunc(data))
+			.attr("stroke", "blue")
+			.attr("stroke-width", 0.25)
+			.attr("fill", "none");
+		return this;
+	};
+	return log;
+}

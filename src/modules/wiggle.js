@@ -1,95 +1,115 @@
-var wiggle = g3.wiggle = {};
+g3.wiggle = function(options, plot, data){
+	var wiggle = {};
 
-wiggle.draw = function(options, wigData, elem){
+	if(!options){ var options = {}; }
+  if(!plot){ return 'Plot Required'; }
+  if(!data || !$.isArray(data)){ return 'Data array required'; }
 
-  var margin = {top: 50, right: 10, bottom: 30, left: 30},
-  width = options.width || $(elem).width() - 2 * margin.left,
-  height = options.height || 800,
-  skip = options.skip || 20,
-  gain = options.gain || 20,
-  max = options.max, // ADD A WAY TO GRAB MAX IF NONE IS GIVEN
-  xDomain = options.xDomain || [0, data.length],
-  yDomain = options.yDomain || [0, data[0].length],
-  c = options.c;
-  
-  // Set x y scales
-  var x = d3.scale.linear()
-    .domain(xDomain)
-    .range([0, width]);
-  var y = d3.scale.linear()
-    .domain(yDomain)
-    .range([0, height]);
+	wiggle.skip = options.skip || 20;
+	wiggle.gain = options.gain || 20;
+	wiggle.max = options.max; // Add an OR case here
+	wiggle.xMin = options.xMin || plot.xDomain[0];
+	wiggle.xInt = options.xInt || 1;
+	wiggle.yMin = options.yMin || plot.yDomain[0];
+	wiggle.yInt = options.yInt || 1;
 
-  // Set x y axis
-  var xAxis = createAxis(x, -height, "top");
-  var yAxis = createAxis(y, -width, "left");
+	var s = wiggle.gain / wiggle.max;
 
-  // Append svg object to dom element
-  var svg = d3.select(elem).append("svg")
-    .attr("class", "log_plot")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.bottom + margin.top) 
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	wiggle.setSkip = function(skip){
+		this.skip = skip;
+		return this;
+	}
 
-  // Create and append SVG axis
-  svg.append("g")
-    .attr("class", "x axis")
-    .call(xAxis);
-  svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis);
+	wiggle.setGain = function(gain){
+		this.gain = gain;
+		return this;
+	}
 
-  for(var k = wigData.data.length - 1; k >= 0; k--){
-    if(skip === 0 || k % skip === 0){
-      var mean = d3.mean(wigData.data[k]);
+	wiggle.setMax = function(max){
+		this.max = max;
+		return this;
+	}
 
-      // Hard Coded value here needs to be thought about and changed  
-      var s = gain / max;
-      var line = d3.svg.area()
-        .interpolate("basis")
-        .x(function (d) {
-          return x(d * s + c + k);
-        })
-        .y(function (d, i){
-          return y(i * wigData.z.int + wigData.z.min);
-        });
-      var area = d3.svg.area()
-        .interpolate("basis")
-        .x(function (d, i) {
-          return x(mean * s + c + k);
-        })
-        .y(function (d, i){
-          return y(i * wigData.z.int + wigData.z.min);
-        });
+	wiggle.setXMin = function(xMin){
+		this.xMin = xMin;
+		return this;
+	}
 
-      svg.append("path")
-        .attr("class", "line" + k)
-        .attr("d", line(wigData.data[k]))
-        .attr("stroke", "black")
-        .attr("stroke-width", 0.25)
-        .attr("fill", "none");
+	wiggle.setYMin = function(yMin){
+		this.yMin = yMin;
+		return this;
+	}
 
-      svg.datum(wigData.data[k]);
+	wiggle.setXInt = function(xInt){
+		this.xInt = xInt;
+		return this;
+	}
 
-      svg.append("clipPath")
-        .attr("id", "clip-below" + k)
-        .append("path")
-        .attr("d", area.x0(width));
+	wiggle.setYInt = function(yInt){
+		this.yInt = yInt;
+		return this;
+	}
 
-      svg.append("path")
-        .attr("class", "area below")
-        .attr("clip-path", "url(#clip-below" + k)
-        .attr("fill", "grey")
-        .attr("d", area.x0(function (d, i){ 
-          return x(d * s + c + k);
-        }));
-    }
-  }
-  // $.getJSON("horizon.json", function(horizon) {
-  //   G3.horizon(horizon, svg, x, y, wigData.geometry.xline_min);
-  // });
+	wiggle.setFillColor = function(color){
+		this.fillColor = color;
+		return this;
+	}
 
-  return this;
+	wiggle.setColor = function(color){
+		this.color = color;
+		return this;
+	}
+
+	wiggle.setStrokeWidth = function(strokeWidth){
+		this.strokeWidth = strokeWidth;
+		return this;
+	}
+
+	wiggle.draw = function() {
+		for(var k = data.length - 1; k >= 0; k--){
+	    if(this.skip === 0 || k % this.skip === 0){
+	      var mean = d3.mean(data[k]); 
+        var line = d3.svg.area()
+          .interpolate('basis')
+          .x(function (d) {
+            return plot.xScale(d * s + wiggle.xMin + k);
+          })
+          .y(function (d, i){
+            return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+          });
+        var area = d3.svg.area()
+          .interpolate('basis')
+          .x(function (d, i) {
+            return plot.xScale(mean * s + wiggle.xMin + k);
+          })
+          .y(function (d, i){
+            return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+          });
+
+        plot.svg.append('path')
+          .attr('class', 'line' + k)
+          .attr('d', line(data[k]))
+          .attr('stroke', 'black')
+          .attr('stroke-width', 0.25)
+          .attr('fill', 'none');
+
+        plot.svg.datum(data[k]);
+
+        plot.svg.append('clipPath')
+          .attr('id', 'clip-below' + k)
+          .append('path')
+          .attr('d', area.x0(plot.width));
+
+        plot.svg.append('path')
+          .attr('class', 'area below')
+          .attr('clip-path', 'url(#clip-below' + k)
+          .attr('fill', 'grey')
+          .attr('d', area.x0(function (d, i){ 
+            return plot.xScale(d * s + wiggle.xMin + k);
+          }));
+	    }
+	  }
+	  return this;
+	}
+	return wiggle;
 };
-
