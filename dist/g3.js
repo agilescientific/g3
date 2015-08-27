@@ -1,6 +1,7 @@
-/*! g3 - v0.0.1 - 2015-08-26 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-08-27 - justinkheisler */
 'use strict';
 ;(function (window) {
+
 function defineg3() {
 	var g3 = {};
 	return g3;
@@ -8,7 +9,9 @@ function defineg3() {
 if(typeof(g3) === 'undefined') {
 	window.g3 = defineg3();
 }
+
 const DEBUG = false;
+
 function createAxis(scale, innerTickSize, orient){
 	return d3.svg.axis()
 		.scale(scale)
@@ -17,30 +20,37 @@ function createAxis(scale, innerTickSize, orient){
 		.tickPadding(5)
 		.orient(orient);
 }
+
 g3.horizon = function(options, plot, data){
 
+	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
+	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
+
 	var horizon = {};
-	horizon.interpolate = options.interpolate || 'basis';
-	horizon.color = options.color || 'blue';
-	horizon.strokeWidth = options.strokeWidth || 2;
-	horizon.xMin = options.xMin || plot.xDomain[0];
+	horizon.interpolate = 'basis';
+	horizon.xInt = 1;
+	horizon.xMin = plot.xDomain[0];
+	horizon.yInt = 1;
+	horizon.yMin = plot.yDomain[0];
+	
+	if(options){
+		if(options.interpolate){ horizon.interpolate = options.interpolate; }
+		if(options.xInt){ horizon.xInt = options.xInt; }
+		if(options.xMin){ horizon.xMin = options.xMin; }
+		if(options.yInt){ horizon.yInt = options.yInt; }
+		if(options.yMin){ horizon.yMin = options.yMin; }
+	}
 
 	horizon.setInterpolate = function(interpolate){
 		this.interpolate = interpolate;
 		return this;
 	}
-	horizon.setColor = function(color){
-		this.color = color;
-		return this;
-	}
-	horizon.setStrokeWidth = function(strokeWidth){
-		this.strokeWidth = strokeWidth;
-		return this;
-	}
+
 	horizon.setXMin = function(xMin){
 		this.xMin = xMin; 
 		return this;
 	}
+
 	horizon.draw = function(){
 		var lineFunc = d3.svg.line()
 			.x(function (d, i) {
@@ -51,26 +61,36 @@ g3.horizon = function(options, plot, data){
 			})
 			.interpolate(this.interpolate);
 
-		this.line = plot.svg.append('svg:path')
+		plot.svg.append('svg:path')
 			.attr('d', lineFunc(data))
-			.attr('stroke', this.color)
-			.attr('stroke-width', this.strokeWidth)
+			.attr('stroke', 'blue')
+			.attr('stroke-width', 2)
 			.attr('fill', 'none');
 		return this;
 	}
 
 	return horizon;
 };
+
 g3.log = function(options, plot, data){
+	
+	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
+	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
+
 	var log = {};
+	log.xInt = 1;
+	log.xMin = plot.xDomain[0];
 	log.yInt = 1;
 	log.yMin = plot.yDomain[0];
 
 	if(options){
 		if(options.yInt){ log.yInt = options.zInt; }
 		if(options.yMin){ log.yMin = options.yMin; }
+		if(options.xInt){ log.xInt = options.xInt; }
+		if(options.xMin){ log.xMin = options.xMin; }
 	}
 
+	// Setters
 	log.setYInt = function(yInt){
 		this.yInt = yInt;
 		return this;
@@ -81,7 +101,22 @@ g3.log = function(options, plot, data){
 		return this;
 	}
 
-	log.draw = function() {
+	log.setXInt = function(xInt){
+		this.xInt = xInt;
+		return this;
+	}
+
+	log.setXMin = function(xMin){
+		this.xMin = xMin;
+		return this;
+	}
+
+	log.setData = function(data){
+		this.data = data;
+		return this;
+	}
+
+	log.draw = function(){
 		var lineFunc = d3.svg.line()
 			.x(function (d) {
 				return plot.xScale(d);
@@ -97,12 +132,18 @@ g3.log = function(options, plot, data){
 			.attr("fill", "none");
 		return this;
 	};
+
+	log.reDraw = function(){
+
+	}
 	return log;
 }
+
 g3.plot = function(options, elem){
+  
+  if(!elem){ return 'Param: elem is missing. A div to attach to is required'; }
 
 	var plot = {};
-
 	plot.margin = {top: 50, right: 10, bottom: 30, left: 30};
 	plot.width = $(elem).width() - 2 * plot.margin.left;
 	plot.height = 800;
@@ -136,7 +177,7 @@ g3.plot = function(options, elem){
   	this.xDomain = domain;
   	return this;
   }
-  
+
   plot.setYDomain = function(domain){
   	this.yDomain = domain;
   	return this;
@@ -175,21 +216,28 @@ g3.plot = function(options, elem){
 	return plot;
 }
 
-
 g3.wiggle = function(options, plot, data){
+
+	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
+	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
+
 	var wiggle = {};
+	wiggle.skip = 20;
+	wiggle.gain = 20;
+	wiggle.xInt = 1;
+	wiggle.xMin = plot.xDomain[0];
+	wiggle.yInt = 1;
+	wiggle.yMin = plot.yDomain[0];
 
-	if(!options){ var options = {}; }
-  if(!plot){ return 'Plot Required'; }
-  if(!data || !$.isArray(data)){ return 'Data array required'; }
-
-	wiggle.skip = options.skip || 20;
-	wiggle.gain = options.gain || 20;
-	wiggle.max = options.max; // Add an OR case here
-	wiggle.xMin = options.xMin || plot.xDomain[0];
-	wiggle.xInt = options.xInt || 1;
-	wiggle.yMin = options.yMin || plot.yDomain[0];
-	wiggle.yInt = options.yInt || 1;
+	if(options){
+		if(options.skip){ wiggle.skip = options.skip; }
+		if(options.gain){ wiggle.gain = options.gain; }
+		if(options.xMin){ wiggle.xMin = options.xMin; }
+		if(options.xMin){ wiggle.xInt = options.xInt; }
+		if(options.yMin){ wiggle.yMin = options.yMin; }
+		if(options.yInt){ wiggle.yInt = options.yInt };
+		if(options.max){ wiggle.max = options.max; } // Add an OR case here
+	}
 
 	var s = wiggle.gain / wiggle.max;
 
@@ -291,4 +339,5 @@ g3.wiggle = function(options, plot, data){
 	}
 	return wiggle;
 };
+
 } (window));

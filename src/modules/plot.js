@@ -1,7 +1,8 @@
 g3.plot = function(options, elem){
+  
+  if(!elem){ return 'Param: elem is missing. A div to attach to is required'; }
 
 	var plot = {};
-
 	plot.margin = {top: 50, right: 10, bottom: 30, left: 30};
 	plot.width = $(elem).width() - 2 * plot.margin.left;
 	plot.height = 800;
@@ -35,7 +36,7 @@ g3.plot = function(options, elem){
   	this.xDomain = domain;
   	return this;
   }
-  
+
   plot.setYDomain = function(domain){
   	this.yDomain = domain;
   	return this;
@@ -73,4 +74,3 @@ g3.plot = function(options, elem){
 	};
 	return plot;
 }
-

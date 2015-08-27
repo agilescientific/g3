@@ -1,17 +1,25 @@
 g3.wiggle = function(options, plot, data){
+
+	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
+	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
+
 	var wiggle = {};
+	wiggle.skip = 20;
+	wiggle.gain = 20;
+	wiggle.xInt = 1;
+	wiggle.xMin = plot.xDomain[0];
+	wiggle.yInt = 1;
+	wiggle.yMin = plot.yDomain[0];
 
-	if(!options){ var options = {}; }
-  if(!plot){ return 'Plot Required'; }
-  if(!data || !$.isArray(data)){ return 'Data array required'; }
-
-	wiggle.skip = options.skip || 20;
-	wiggle.gain = options.gain || 20;
-	wiggle.max = options.max; // Add an OR case here
-	wiggle.xMin = options.xMin || plot.xDomain[0];
-	wiggle.xInt = options.xInt || 1;
-	wiggle.yMin = options.yMin || plot.yDomain[0];
-	wiggle.yInt = options.yInt || 1;
+	if(options){
+		if(options.skip){ wiggle.skip = options.skip; }
+		if(options.gain){ wiggle.gain = options.gain; }
+		if(options.xMin){ wiggle.xMin = options.xMin; }
+		if(options.xMin){ wiggle.xInt = options.xInt; }
+		if(options.yMin){ wiggle.yMin = options.yMin; }
+		if(options.yInt){ wiggle.yInt = options.yInt };
+		if(options.max){ wiggle.max = options.max; } // Add an OR case here
+	}
 
 	var s = wiggle.gain / wiggle.max;
 
