@@ -42,14 +42,48 @@ g3.log = function(options, plot, data){
 		return this;
 	}
 
-	log.draw = function(){
-		this.svg = plot.svg.append("path")  
-			.attr("d", lineFunc(data))
-			.attr("stroke", "blue")
-			.attr("stroke-width", 0.25)
-			.attr("fill", "none");
-		return this;
-	}
+  log.draw = function(){
+    this.svg = plot.svg.append("path")  
+      .datum(data)
+      .attr("d", lineFunc)
+      .attr("stroke", "blue")
+      .attr("stroke-width", 0.25)
+      .attr("fill", "none");
+
+    // var sorted = data.sort(function(a, b) {
+    //   return a - b;
+    // });
+
+    // var focus = plot.svg.append("g")
+    //     .attr("class", "focus")
+    //     .style("display", "none");
+
+    // focus.append("circle")
+    //     .attr("r", 4.5);
+
+    // focus.append("text")
+    //     .attr("x", 9)
+    //     .attr("dy", ".35em");
+    //     var bisectDate = d3.bisector(function(d) { return d; }).left;
+    // plot.svg.append("rect")
+    //     .attr("class", "overlay")
+    //     .attr("width", plot.width)
+    //     .attr("height", plot.height)
+    //     .on("mouseover", function() { focus.style("display", null); })
+    //     .on("mouseout", function() { focus.style("display", "none"); })
+    //     .on("mousemove", mousemove);
+
+    // function mousemove() {
+    //   var x0 = plot.xScale.invert(d3.mouse(this)[0]),
+    //       i = bisectDate(data, x0, 1),
+    //       d0 = data[i - 1],
+    //       d1 = data[i],
+    //       d = x0 - d0 > d1 - x0 ? d1 : d0;
+    //   focus.attr("transform", "translate(" + plot.xScale(d) + "," + plot.yScale(d) + ")");
+    //   focus.select("text").text(d);
+    // };
+    return this;
+  }
 
 	var lineFunc = d3.svg.line()
 	.x(function (d) {
@@ -66,6 +100,7 @@ g3.log = function(options, plot, data){
 			.attr('d', lineFunc(data));
 		return this;
 	}
+
 
 	return log;
 }

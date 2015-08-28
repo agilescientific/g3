@@ -73,7 +73,6 @@ g3.plot = function(options, elem){
 	  // Create and append SVG axis
 	  if(!this.axisVisible){ 
 	  	this.yAxis.tickFormat(""); 
-	  	this.yAxis.outerTickSize(0);
 	  }
 
 	  this.svg.append('g')

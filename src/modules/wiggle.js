@@ -77,23 +77,23 @@ g3.wiggle = function(options, plot, data){
 		for(var k = data.length - 1; k >= 0; k--){
 	    if(this.skip === 0 || k % this.skip === 0){
 	      var mean = d3.mean(data[k]); 
-        var line = d3.svg.area()
-          .interpolate('basis')
-          .x(function (d) {
-            return plot.xScale(d * s + wiggle.xMin + k);
-          })
-          .y(function (d, i){
-            return plot.yScale(i * wiggle.yInt + wiggle.yMin);
-          });
-        var area = d3.svg.area()
-          .interpolate('basis')
-          .x(function (d, i) {
-            return plot.xScale(mean * s + wiggle.xMin + k);
-          })
-          .y(function (d, i){
-            return plot.yScale(i * wiggle.yInt + wiggle.yMin);
-          });
 
+		    var line = d3.svg.area()
+		      .interpolate('basis')
+		      .x(function (d) {
+		        return plot.xScale(d * s + wiggle.xMin + k);
+		      })
+		      .y(function (d, i){
+		        return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+		      });
+		    var area = d3.svg.area()
+		      .interpolate('basis')
+		      .x(function (d, i) {
+		        return plot.xScale(mean * s + wiggle.xMin + k);
+		      })
+		      .y(function (d, i){
+		        return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+		      });
         plot.svg.append('path')
           .attr('class', 'line' + k)
           .attr('d', line(data[k]))
@@ -111,13 +111,18 @@ g3.wiggle = function(options, plot, data){
         plot.svg.append('path')
           .attr('class', 'area below')
           .attr('clip-path', 'url(#clip-below' + k)
-          .attr('fill', 'grey')
+          .attr('fill', 'black')
           .attr('d', area.x0(function (d, i){ 
             return plot.xScale(d * s + wiggle.xMin + k);
           }));
 	    }
 	  }
 	  return this;
+	}
+
+	wiggle.reDraw = function(){
+
+		return this;
 	}
 	return wiggle;
 };

@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-08-27 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-08-28 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -20,7 +20,6 @@ function createAxis(scale, innerTickSize, orient){
 		.tickPadding(5)
 		.orient(orient);
 }
-
 g3.horizon = function(options, plot, data){
 
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
@@ -123,14 +122,48 @@ g3.log = function(options, plot, data){
 		return this;
 	}
 
-	log.draw = function(){
-		this.svg = plot.svg.append("path")  
-			.attr("d", lineFunc(data))
-			.attr("stroke", "blue")
-			.attr("stroke-width", 0.25)
-			.attr("fill", "none");
-		return this;
-	}
+  log.draw = function(){
+    this.svg = plot.svg.append("path")  
+      .datum(data)
+      .attr("d", lineFunc)
+      .attr("stroke", "blue")
+      .attr("stroke-width", 0.25)
+      .attr("fill", "none");
+
+    // var sorted = data.sort(function(a, b) {
+    //   return a - b;
+    // });
+
+    // var focus = plot.svg.append("g")
+    //     .attr("class", "focus")
+    //     .style("display", "none");
+
+    // focus.append("circle")
+    //     .attr("r", 4.5);
+
+    // focus.append("text")
+    //     .attr("x", 9)
+    //     .attr("dy", ".35em");
+    //     var bisectDate = d3.bisector(function(d) { return d; }).left;
+    // plot.svg.append("rect")
+    //     .attr("class", "overlay")
+    //     .attr("width", plot.width)
+    //     .attr("height", plot.height)
+    //     .on("mouseover", function() { focus.style("display", null); })
+    //     .on("mouseout", function() { focus.style("display", "none"); })
+    //     .on("mousemove", mousemove);
+
+    // function mousemove() {
+    //   var x0 = plot.xScale.invert(d3.mouse(this)[0]),
+    //       i = bisectDate(data, x0, 1),
+    //       d0 = data[i - 1],
+    //       d1 = data[i],
+    //       d = x0 - d0 > d1 - x0 ? d1 : d0;
+    //   focus.attr("transform", "translate(" + plot.xScale(d) + "," + plot.yScale(d) + ")");
+    //   focus.select("text").text(d);
+    // };
+    return this;
+  }
 
 	var lineFunc = d3.svg.line()
 	.x(function (d) {
@@ -147,6 +180,7 @@ g3.log = function(options, plot, data){
 			.attr('d', lineFunc(data));
 		return this;
 	}
+
 
 	return log;
 }
@@ -226,7 +260,6 @@ g3.plot = function(options, elem){
 	  // Create and append SVG axis
 	  if(!this.axisVisible){ 
 	  	this.yAxis.tickFormat(""); 
-	  	this.yAxis.outerTickSize(0);
 	  }
 
 	  this.svg.append('g')
@@ -240,6 +273,54 @@ g3.plot = function(options, elem){
 	return plot;
 }
 
+g3.seismic = function(options, plot, data){
+	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
+	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
+	
+	var seismic = {};
+	var max = 13532;
+	seismic.color = d3.scale.linear()
+		.domain([-max, max])
+		.range(['#000', '#FFF']);
+
+  seismic.draw = function(){
+    this.canvas = d3.select(plot.elem)
+      .append('canvas')
+      .attr('width', data.length)
+      .attr('height', data[0].length)
+      .style('width', plot.width + plot.margin.left + plot.margin.right - 2 + 'px')
+      .style('height', plot.height + plot.margin.bottom + 8 + 'px')
+      .style('padding', 19 + 'px')
+      .style('top', plot.margin.top + 'px')
+      .style('left', plot.margin.left + 'px')
+      .call(seismic.drawImage);
+    return this;
+  }
+
+	seismic.drawImage = function(canvas){
+		var context = canvas.node().getContext('2d'),
+		image = context.createImageData(data.length, data[0].length);
+
+		for(var i = 0, p = -1; i < data[0].length; ++ i){
+			for(var j = 0; j < data.length; ++j){
+				var c = d3.rgb(seismic.color(data[j][i]));
+				image.data[++p] = c.r;
+				image.data[++p] = c.g;
+				image.data[++p] = c.b;
+				image.data[++p] = 255;
+			}
+		}
+		context.putImageData(image, 0, 0);
+		return this;
+	}
+
+	seismic.setMax = function(max){
+		this.max = max;
+		return this;
+	}	
+
+	return seismic;
+}
 g3.wiggle = function(options, plot, data){
 
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
@@ -319,23 +400,23 @@ g3.wiggle = function(options, plot, data){
 		for(var k = data.length - 1; k >= 0; k--){
 	    if(this.skip === 0 || k % this.skip === 0){
 	      var mean = d3.mean(data[k]); 
-        var line = d3.svg.area()
-          .interpolate('basis')
-          .x(function (d) {
-            return plot.xScale(d * s + wiggle.xMin + k);
-          })
-          .y(function (d, i){
-            return plot.yScale(i * wiggle.yInt + wiggle.yMin);
-          });
-        var area = d3.svg.area()
-          .interpolate('basis')
-          .x(function (d, i) {
-            return plot.xScale(mean * s + wiggle.xMin + k);
-          })
-          .y(function (d, i){
-            return plot.yScale(i * wiggle.yInt + wiggle.yMin);
-          });
 
+		    var line = d3.svg.area()
+		      .interpolate('basis')
+		      .x(function (d) {
+		        return plot.xScale(d * s + wiggle.xMin + k);
+		      })
+		      .y(function (d, i){
+		        return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+		      });
+		    var area = d3.svg.area()
+		      .interpolate('basis')
+		      .x(function (d, i) {
+		        return plot.xScale(mean * s + wiggle.xMin + k);
+		      })
+		      .y(function (d, i){
+		        return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+		      });
         plot.svg.append('path')
           .attr('class', 'line' + k)
           .attr('d', line(data[k]))
@@ -353,13 +434,18 @@ g3.wiggle = function(options, plot, data){
         plot.svg.append('path')
           .attr('class', 'area below')
           .attr('clip-path', 'url(#clip-below' + k)
-          .attr('fill', 'grey')
+          .attr('fill', 'black')
           .attr('d', area.x0(function (d, i){ 
             return plot.xScale(d * s + wiggle.xMin + k);
           }));
 	    }
 	  }
 	  return this;
+	}
+
+	wiggle.reDraw = function(){
+
+		return this;
 	}
 	return wiggle;
 };
