@@ -1,15 +1,16 @@
-g3.wiggle = function(options, plot, data){
+g3.wiggle = function(plot, data, options){
 
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
 
 	var wiggle = {};
-	wiggle.skip = 20;
-	wiggle.gain = 20;
+	wiggle.skip = 0;
+	wiggle.gain = 30;
 	wiggle.xInt = 1;
 	wiggle.xMin = plot.xDomain[0];
 	wiggle.yInt = 1;
 	wiggle.yMin = plot.yDomain[0];
+	wiggle.sampleRate = 1;
 
 	if(options){
 		if(options.skip){ wiggle.skip = options.skip; }
@@ -73,27 +74,36 @@ g3.wiggle = function(options, plot, data){
 		return this;
 	}
 
+	wiggle.setSampleRate = function(sampleRate){
+		this.sampleRate = sampleRate;
+		return this;
+	}
+
 	wiggle.draw = function() {
 		for(var k = data.length - 1; k >= 0; k--){
 	    if(this.skip === 0 || k % this.skip === 0){
 	      var mean = d3.mean(data[k]); 
 
+	      // Line function
 		    var line = d3.svg.area()
 		      .interpolate('basis')
 		      .x(function (d) {
-		        return plot.xScale(d * s + wiggle.xMin + k);
+		        return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
 		      })
 		      .y(function (d, i){
 		        return plot.yScale(i * wiggle.yInt + wiggle.yMin);
 		      });
+
+		    // Clip path area function
 		    var area = d3.svg.area()
 		      .interpolate('basis')
 		      .x(function (d, i) {
-		        return plot.xScale(mean * s + wiggle.xMin + k);
+		        return plot.xScale(mean * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
 		      })
 		      .y(function (d, i){
 		        return plot.yScale(i * wiggle.yInt + wiggle.yMin);
 		      });
+
         plot.svg.append('path')
           .attr('class', 'line' + k)
           .attr('d', line(data[k]))
@@ -109,20 +119,84 @@ g3.wiggle = function(options, plot, data){
           .attr('d', area.x0(plot.width));
 
         plot.svg.append('path')
-          .attr('class', 'area below')
+          .attr('id', 'area-below' + k)
           .attr('clip-path', 'url(#clip-below' + k)
-          .attr('fill', 'black')
+          .attr('fill', 'grey')
           .attr('d', area.x0(function (d, i){ 
-            return plot.xScale(d * s + wiggle.xMin + k);
+            return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
           }));
 	    }
 	  }
 	  return this;
 	}
 
-	wiggle.reDraw = function(){
+wiggle.reDraw = function(data, xDomain, yDomain){
 
-		return this;
-	}
+	// Redraw the Axis
+	plot.xScale.domain(xDomain);
+	plot.yScale.domain(yDomain);
+		
+	plot.svg.select('.x.axis')
+		.transition()
+		.duration(600)
+		.call(plot.xAxis)
+		.selectAll("text")  
+		.style("text-anchor", "start")
+    	.attr("transform", "rotate(-45)" );
+
+	plot.svg.select('.y.axis')
+		.transition()
+		.duration(600)
+		.call(plot.yAxis);
+
+  for(var k = data.length - 1; k >= 0; k--){
+    if(this.skip === 0 || k % this.skip === 0){
+			var mean = d3.mean(data[k]); 
+      
+      // Line function
+      var line = d3.svg.area()
+        .interpolate('basis')
+        .x(function (d) {
+          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+        })
+        .y(function (d, i){
+          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+        });
+
+      // Clip path area function
+      var area = d3.svg.area()
+        .interpolate('basis')
+        .x(function (d, i) {
+          return plot.xScale(mean * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+        })
+        .y(function (d, i){
+          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+        });
+
+      plot.svg.select(".line" + k)
+        .transition()
+        .duration(600)
+        .attr('d', line(data[k]))
+        .ease("linear");
+
+      plot.svg.datum(data[k]);
+
+      plot.svg.select("#clip-below" + k)
+        .transition()
+        .duration(600)
+        .attr('d', area.x0(plot.width))
+        .ease('linear');
+        
+      plot.svg.select("#area-below" + k)
+        .transition()
+        .duration(600)
+        .attr('d', area.x0(function (d, i){ 
+          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+        }))
+        .ease('linear');
+    	} 
+  	}
+    return this;
+  }
 	return wiggle;
 };

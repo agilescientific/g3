@@ -1,4 +1,4 @@
-g3.log = function(options, plot, data){
+g3.log = function(plot, data, options){
 	
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
@@ -8,6 +8,7 @@ g3.log = function(options, plot, data){
 	log.xMin = plot.xDomain[0];
 	log.yInt = 1;
 	log.yMin = plot.yDomain[0];
+	log.color = "blue";
 
 	if(options){
 		if(options.yInt){ log.yInt = options.zInt; }
@@ -42,11 +43,16 @@ g3.log = function(options, plot, data){
 		return this;
 	}
 
+	log.setColor = function(color){
+		this.color = color;
+		return this;
+	}
+
   log.draw = function(){
     this.svg = plot.svg.append("path")  
       .datum(data)
       .attr("d", lineFunc)
-      .attr("stroke", "blue")
+      .attr("stroke", this.color)
       .attr("stroke-width", 0.25)
       .attr("fill", "none");
 
@@ -94,10 +100,30 @@ g3.log = function(options, plot, data){
 	})
 	.interpolate('basis');
 
-	log.reDraw = function(data){
+	log.reDraw = function(data, xDomain, yDomain){
+		plot.xScale.domain(xDomain);
+		plot.yScale.domain(yDomain);
+		
+		plot.svg.select('.x.axis')
+			.transition()
+			.duration(600)
+			.call(plot.xAxis)
+			.ease('linear')
+			.selectAll("text")  
+        .style("text-anchor", "start")
+        .attr("transform", "rotate(-45)");
+
+		plot.svg.select('.y.axis')
+			.transition()
+			.duration(600)
+			.call(plot.yAxis)
+			.ease('linear');
+
 		this.svg.transition()
 			.duration(600)
-			.attr('d', lineFunc(data));
+			.attr('d', lineFunc(data))
+			.ease('linear');
+
 		return this;
 	}
 
