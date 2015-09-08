@@ -241,5 +241,25 @@ g3.plot = function(elem, options){
 	  return this;
 	};
 
+  plot.reDraw = function(xDomain, yDomain){
+    this.xScale.domain(xDomain);
+    this.yScale.domain(yDomain);
+    
+    this.svg.select('.x.axis')
+      .transition()
+      .duration(600)
+      .call(plot.xAxis)
+      .ease('linear')
+      .selectAll("text")  
+        .style("text-anchor", "start")
+        .attr("transform", "rotate(-45)");
+
+    this.svg.select('.y.axis')
+      .transition()
+      .duration(600)
+      .call(plot.yAxis)
+      .ease('linear');
+  }
+
 	return plot;
 }

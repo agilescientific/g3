@@ -100,24 +100,7 @@ g3.log = function(plot, data, options){
 	})
 	.interpolate('basis');
 
-	log.reDraw = function(data, xDomain, yDomain){
-		plot.xScale.domain(xDomain);
-		plot.yScale.domain(yDomain);
-		
-		plot.svg.select('.x.axis')
-			.transition()
-			.duration(600)
-			.call(plot.xAxis)
-			.ease('linear')
-			.selectAll("text")  
-        .style("text-anchor", "start")
-        .attr("transform", "rotate(-45)");
-
-		plot.svg.select('.y.axis')
-			.transition()
-			.duration(600)
-			.call(plot.yAxis)
-			.ease('linear');
+	log.reDraw = function(data){
 
 		this.svg.transition()
 			.duration(600)
