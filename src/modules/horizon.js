@@ -48,7 +48,7 @@ g3.horizon = function(options, plot, data){
 
 	horizon.reDraw = function(){
 		this.svg.transition()
-			.duration(600)
+			.duration(500)
 			.attr('d', lineFunc(data));
 		return this;
 	}

@@ -71,7 +71,7 @@ g3.horizon = function(options, plot, data){
 
 	horizon.reDraw = function(){
 		this.svg.transition()
-			.duration(600)
+			.duration(500)
 			.attr('d', lineFunc(data));
 		return this;
 	}
@@ -184,7 +184,7 @@ g3.log = function(plot, data, options){
 	log.reDraw = function(data){
 
 		this.svg.transition()
-			.duration(600)
+			.duration(500)
 			.attr('d', lineFunc(data))
 			.ease('linear');
 
@@ -400,7 +400,7 @@ g3.plot = function(elem, options){
 	  	this.x2Axis = createAxis(this.x2Scale, -this.height, this.x2Orient, this.x2Ticks);
 	  	this.x2Axis.tickFormat(this.x2TickFormat);
 	  	this.svg.append('g')
-	    	.attr('class', 'x axis')
+	    	.attr('class', 'x2 axis')
 		    .attr("transform", "translate(" + "0," + this.height + ")")
 	    	.call(this.x2Axis)
 	    	.selectAll("text")  
@@ -414,7 +414,7 @@ g3.plot = function(elem, options){
 	  	this.y2Axis = createAxis(this.y2Scale, -this.width, this.y2Orient, this.y2Ticks);
 	  	this.y2Axis.tickFormat(this.y2TickFormat);
 	  	this.svg.append('g')
-		    .attr('class', 'y axis')
+		    .attr('class', 'y2 axis')
 		    .attr("transform", "translate(" + this.width + ",0)")
 		    .call(this.y2Axis);
 	  }
@@ -438,24 +438,48 @@ g3.plot = function(elem, options){
 	  return this;
 	};
 
-  plot.reDraw = function(xDomain, yDomain){
-    this.xScale.domain(xDomain);
-    this.yScale.domain(yDomain);
-    
-    this.svg.select('.x.axis')
-      .transition()
-      .duration(600)
-      .call(plot.xAxis)
-      .ease('linear')
-      .selectAll("text")  
-        .style("text-anchor", "start")
-        .attr("transform", "rotate(-45)");
+  plot.reDraw = function(xDomain, yDomain, x2Domain, y2Domain){    
+    if(xDomain){
+      this.xScale.domain(xDomain);
+      this.svg.select('.x.axis')
+        .transition()
+        .duration(500)
+        .call(this.xAxis)
+        .ease('linear')
+        .selectAll("text")  
+          .style("text-anchor", "start")
+          .attr("transform", "rotate(-45)");
+    }
 
-    this.svg.select('.y.axis')
-      .transition()
-      .duration(600)
-      .call(plot.yAxis)
-      .ease('linear');
+    if(yDomain){
+      this.yScale.domain(yDomain);
+      this.svg.select('.y.axis')
+        .transition()
+        .duration(500)
+        .call(this.yAxis)
+        .ease('linear');
+    }
+
+    if(x2Domain){
+      this.x2Scale.domain(x2Domain);
+      this.svg.select('.x2.axis')
+        .transition()
+        .duration(500)
+        .call(this.x2Axis)
+        .ease('linear')
+        .selectAll("text")  
+          .style("text-anchor", "start")
+          .attr("transform", "rotate(-45)");
+    }
+
+    if(y2Domain){
+      this.y2Scale.domain(y2Domain);
+      this.svg.select('.y2.axis')
+        .transition()
+        .duration(500)
+        .call(this.y2Axis)
+        .ease('linear');
+    }
   }
 
 	return plot;
@@ -658,7 +682,7 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 		
 	plot.svg.select('.x.axis')
 		.transition()
-		.duration(600)
+		.duration(500)
 		.call(plot.xAxis)
 		.selectAll("text")  
 		.style("text-anchor", "start")
@@ -666,7 +690,7 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
 	plot.svg.select('.y.axis')
 		.transition()
-		.duration(600)
+		.duration(500)
 		.call(plot.yAxis);
 
   for(var k = data.length - 1; k >= 0; k--){
@@ -695,7 +719,7 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
       plot.svg.select(".line" + k)
         .transition()
-        .duration(600)
+        .duration(500)
         .attr('d', line(data[k]))
         .ease("linear");
 
@@ -703,13 +727,13 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
       plot.svg.select("#clip-below" + k)
         .transition()
-        .duration(600)
+        .duration(500)
         .attr('d', area.x0(plot.width))
         .ease('linear');
         
       plot.svg.select("#area-below" + k)
         .transition()
-        .duration(600)
+        .duration(500)
         .attr('d', area.x0(function (d, i){ 
           return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
         }))

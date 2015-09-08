@@ -138,7 +138,7 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 		
 	plot.svg.select('.x.axis')
 		.transition()
-		.duration(600)
+		.duration(500)
 		.call(plot.xAxis)
 		.selectAll("text")  
 		.style("text-anchor", "start")
@@ -146,7 +146,7 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
 	plot.svg.select('.y.axis')
 		.transition()
-		.duration(600)
+		.duration(500)
 		.call(plot.yAxis);
 
   for(var k = data.length - 1; k >= 0; k--){
@@ -175,7 +175,7 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
       plot.svg.select(".line" + k)
         .transition()
-        .duration(600)
+        .duration(500)
         .attr('d', line(data[k]))
         .ease("linear");
 
@@ -183,13 +183,13 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
       plot.svg.select("#clip-below" + k)
         .transition()
-        .duration(600)
+        .duration(500)
         .attr('d', area.x0(plot.width))
         .ease('linear');
         
       plot.svg.select("#area-below" + k)
         .transition()
-        .duration(600)
+        .duration(500)
         .attr('d', area.x0(function (d, i){ 
           return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
         }))

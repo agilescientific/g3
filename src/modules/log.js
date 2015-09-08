@@ -103,7 +103,7 @@ g3.log = function(plot, data, options){
 	log.reDraw = function(data){
 
 		this.svg.transition()
-			.duration(600)
+			.duration(500)
 			.attr('d', lineFunc(data))
 			.ease('linear');
 
