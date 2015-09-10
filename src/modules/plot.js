@@ -92,12 +92,12 @@ g3.plot = function(elem, options){
   }
 
   plot.setX2Ticks = function(ticks){
-  	this.xTicks = ticks;
+  	this.x2Ticks = ticks;
   	return this;
   }
 
   plot.setY2Ticks = function(ticks){
-  	this.yTicks = ticks;
+  	this.y2Ticks = ticks;
   	return this;
   }
 

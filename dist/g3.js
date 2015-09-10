@@ -289,12 +289,12 @@ g3.plot = function(elem, options){
   }
 
   plot.setX2Ticks = function(ticks){
-  	this.xTicks = ticks;
+  	this.x2Ticks = ticks;
   	return this;
   }
 
   plot.setY2Ticks = function(ticks){
-  	this.yTicks = ticks;
+  	this.y2Ticks = ticks;
   	return this;
   }
 
@@ -491,6 +491,8 @@ g3.seismic = function(plot, data, options){
 	var seismic = {};
 	seismic.max = 1;
 	seismic.gain = 1;
+	seismic.plot = plot;
+	seismic.data = data;
 
   seismic.draw = function(){
 	seismic.color = d3.scale.linear()
@@ -523,6 +525,7 @@ g3.seismic = function(plot, data, options){
     // Wipe the old canvas, the new size can be different
   	seismic.context.clearRect(0, 0, seismic.data.length, seismic.data[0].length);
 
+  	seismic.data = data;
 		var x = data.length,
 		y = data[0].length;
 		var image = seismic.context.createImageData(x,y);
