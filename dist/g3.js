@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-09-10 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-09-11 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -21,7 +21,7 @@ function createAxis(scale, innerTickSize, orient, ticks){
 		.orient(orient)
 		.ticks(ticks);
 }
-g3.horizon = function(options, plot, data){
+g3.horizon = function(plot, data, options){
 
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
@@ -57,19 +57,28 @@ g3.horizon = function(options, plot, data){
 				return plot.xScale(i + horizon.xMin);
 			})
 			.y(function (d) {
-				return plot.yScale(d / 1000);
+				return plot.yScale(d);
 			})
 			.interpolate(this.interpolate);
 
 		this.svg = plot.svg.append('svg:path')
 			.attr('d', lineFunc(data))
-			.attr('stroke', 'blue')
-			.attr('stroke-width', 2)
+			.attr('stroke', 'green')
+			.attr('stroke-width', 1)
 			.attr('fill', 'none');
 		return this;
 	}
 
 	horizon.reDraw = function(){
+		var lineFunc = d3.svg.line()
+			.x(function (d, i) {
+				return plot.xScale(i + horizon.xMin);
+			})
+			.y(function (d) {
+				return plot.yScale(d);
+			})
+			.interpolate(this.interpolate);
+		
 		this.svg.transition()
 			.duration(500)
 			.attr('d', lineFunc(data));
@@ -420,17 +429,29 @@ g3.plot = function(elem, options){
 	  }
 
 		if(this.xTitle){
+      
+      if(this.xTickFormat === ""){
+        var margin = -10;
+      } else {
+        var margin = -30;
+      }
 			this.svg.append("text")
 					.attr("x", (this.width) / 2)
-					.attr("y", -30)
+					.attr("y", margin)
 					.style("text-anchor", "middle")
 					.text(this.xTitle);
 		}
 		if(this.yTitle){
+
+      if(this.yTickFormat === ""){
+        var yMargin = -10;
+      } else {
+        var yMargin = -40;
+      }
+
 			this.svg.append("text")
 				.attr("transform", "rotate(-90)")
-				//.attr("x", -15)
-				.attr("y", -20)
+				.attr("y", yMargin)
 				.attr("dy", "1em")
 				.style("text-anchor", "end")
 				.text(this.yTitle);
@@ -469,7 +490,7 @@ g3.plot = function(elem, options){
         .ease('linear')
         .selectAll("text")  
           .style("text-anchor", "start")
-          .attr("transform", "rotate(-45)");
+          .attr("transform", "rotate(45)");
     }
 
     if(y2Domain){
@@ -732,6 +753,9 @@ wiggle.reDraw = function(data, xDomain, yDomain){
     if(this.skip === 0 || k % this.skip === 0){
 			var mean = d3.mean(data[k]); 
       
+      plot.svg.select("#clip-below" + k)
+        .remove()
+
       // Line function
       var line = d3.svg.area()
         .interpolate('basis')
@@ -760,13 +784,13 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
       plot.svg.datum(data[k]);
 
-      plot.svg.select("#clip-below" + k)
-        .transition()
-        .duration(500)
-        .attr('d', area.x0(plot.width))
-        .ease('linear');
+      plot.svg.append('clipPath')
+        .attr('id', 'clip-below' + k)
+        .append('path')
+        .attr('d', area.x0(plot.width));
         
       plot.svg.select("#area-below" + k)
+        .attr('clip-path', 'url(#clip-below' + k)
         .transition()
         .duration(500)
         .attr('d', area.x0(function (d, i){ 

@@ -223,17 +223,29 @@ g3.plot = function(elem, options){
 	  }
 
 		if(this.xTitle){
+      
+      if(this.xTickFormat === ""){
+        var margin = -10;
+      } else {
+        var margin = -30;
+      }
 			this.svg.append("text")
 					.attr("x", (this.width) / 2)
-					.attr("y", -30)
+					.attr("y", margin)
 					.style("text-anchor", "middle")
 					.text(this.xTitle);
 		}
 		if(this.yTitle){
+
+      if(this.yTickFormat === ""){
+        var yMargin = -10;
+      } else {
+        var yMargin = -40;
+      }
+
 			this.svg.append("text")
 				.attr("transform", "rotate(-90)")
-				//.attr("x", -15)
-				.attr("y", -20)
+				.attr("y", yMargin)
 				.attr("dy", "1em")
 				.style("text-anchor", "end")
 				.text(this.yTitle);
@@ -272,7 +284,7 @@ g3.plot = function(elem, options){
         .ease('linear')
         .selectAll("text")  
           .style("text-anchor", "start")
-          .attr("transform", "rotate(-45)");
+          .attr("transform", "rotate(45)");
     }
 
     if(y2Domain){
