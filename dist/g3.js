@@ -33,6 +33,7 @@ g3.horizon = function(plot, data, options){
 	horizon.yInt = 1;
 	horizon.yMin = plot.yDomain[0];
 	horizon.duration = 500;
+	horizon.gain = 1;
 
 	if(options){
 		if(options.interpolate){ horizon.interpolate = options.interpolate; }
@@ -57,13 +58,18 @@ g3.horizon = function(plot, data, options){
 		return this;
 	}
 
+	horizon.setGain = function(gain){
+		this.gain = gain;
+		return this;
+	}
+
 	horizon.draw = function(){
 		var lineFunc = d3.svg.line()
 			.x(function (d, i) {
 				return plot.xScale(i + horizon.xMin);
 			})
 			.y(function (d) {
-				return plot.yScale(d);
+				return plot.yScale(d * horizon.gain);
 			})
 			.interpolate(this.interpolate);
 
@@ -81,7 +87,7 @@ g3.horizon = function(plot, data, options){
 				return plot.xScale(i + horizon.xMin);
 			})
 			.y(function (d) {
-				return plot.yScale(d);
+				return plot.yScale(d * horizon.gain);
 			})
 			.interpolate(this.interpolate);
 		
@@ -570,7 +576,7 @@ g3.seismic = function(plot, data, options){
 		// Paint the image
 		for(var i = 0, p = -1; i < y; ++ i){
 			for(var j = 0; j < x; ++j){
-				var c = d3.rgb(seismic.color(data[j][i]));
+				var c = d3.rgb(seismic.color(data[j][i] * seismic.gain));
 				image.data[++p] = c.r;
 				image.data[++p] = c.g;
 				image.data[++p] = c.b;
@@ -591,7 +597,7 @@ g3.seismic = function(plot, data, options){
 
 		for(var i = 0, p = -1; i < y; ++ i){
 			for(var j = 0; j < x; ++j){
-				var c = d3.rgb(seismic.color(seismic.data[j][i]));
+				var c = d3.rgb(seismic.color(seismic.data[j][i] * seismic.gain));
 				seismic.image.data[++p] = c.r;
 				seismic.image.data[++p] = c.g;
 				seismic.image.data[++p] = c.b;

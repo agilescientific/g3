@@ -10,6 +10,7 @@ g3.horizon = function(plot, data, options){
 	horizon.yInt = 1;
 	horizon.yMin = plot.yDomain[0];
 	horizon.duration = 500;
+	horizon.gain = 1;
 
 	if(options){
 		if(options.interpolate){ horizon.interpolate = options.interpolate; }
@@ -34,13 +35,18 @@ g3.horizon = function(plot, data, options){
 		return this;
 	}
 
+	horizon.setGain = function(gain){
+		this.gain = gain;
+		return this;
+	}
+
 	horizon.draw = function(){
 		var lineFunc = d3.svg.line()
 			.x(function (d, i) {
 				return plot.xScale(i + horizon.xMin);
 			})
 			.y(function (d) {
-				return plot.yScale(d);
+				return plot.yScale(d * horizon.gain);
 			})
 			.interpolate(this.interpolate);
 
@@ -58,7 +64,7 @@ g3.horizon = function(plot, data, options){
 				return plot.xScale(i + horizon.xMin);
 			})
 			.y(function (d) {
-				return plot.yScale(d);
+				return plot.yScale(d * horizon.gain);
 			})
 			.interpolate(this.interpolate);
 		

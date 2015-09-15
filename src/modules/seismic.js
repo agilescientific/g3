@@ -48,7 +48,7 @@ g3.seismic = function(plot, data, options){
 		// Paint the image
 		for(var i = 0, p = -1; i < y; ++ i){
 			for(var j = 0; j < x; ++j){
-				var c = d3.rgb(seismic.color(data[j][i]));
+				var c = d3.rgb(seismic.color(data[j][i] * seismic.gain));
 				image.data[++p] = c.r;
 				image.data[++p] = c.g;
 				image.data[++p] = c.b;
@@ -69,7 +69,7 @@ g3.seismic = function(plot, data, options){
 
 		for(var i = 0, p = -1; i < y; ++ i){
 			for(var j = 0; j < x; ++j){
-				var c = d3.rgb(seismic.color(seismic.data[j][i]));
+				var c = d3.rgb(seismic.color(seismic.data[j][i] * seismic.gain));
 				seismic.image.data[++p] = c.r;
 				seismic.image.data[++p] = c.g;
 				seismic.image.data[++p] = c.b;
