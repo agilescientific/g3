@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-09-11 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-09-15 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -32,6 +32,7 @@ g3.horizon = function(plot, data, options){
 	horizon.xMin = plot.xDomain[0];
 	horizon.yInt = 1;
 	horizon.yMin = plot.yDomain[0];
+	horizon.duration = 500;
 
 	if(options){
 		if(options.interpolate){ horizon.interpolate = options.interpolate; }
@@ -48,6 +49,11 @@ g3.horizon = function(plot, data, options){
 
 	horizon.setXMin = function(xMin){
 		this.xMin = xMin; 
+		return this;
+	}
+
+	horizon.setDuration = function(duration){
+		this.duration = duration;
 		return this;
 	}
 
@@ -69,7 +75,7 @@ g3.horizon = function(plot, data, options){
 		return this;
 	}
 
-	horizon.reDraw = function(){
+	horizon.reDraw = function(data){
 		var lineFunc = d3.svg.line()
 			.x(function (d, i) {
 				return plot.xScale(i + horizon.xMin);
@@ -80,7 +86,7 @@ g3.horizon = function(plot, data, options){
 			.interpolate(this.interpolate);
 		
 		this.svg.transition()
-			.duration(500)
+			.duration(this.duration)
 			.attr('d', lineFunc(data));
 		return this;
 	}
@@ -99,6 +105,7 @@ g3.log = function(plot, data, options){
 	log.yInt = 1;
 	log.yMin = plot.yDomain[0];
 	log.color = "blue";
+	log.duration = 500;
 
 	if(options){
 		if(options.yInt){ log.yInt = options.zInt; }
@@ -108,6 +115,11 @@ g3.log = function(plot, data, options){
 	}
 
 	// Setters
+	log.setDuration = function(duration){
+		this.duration = duration;
+		return this;
+	}
+
 	log.setYInt = function(yInt){
 		this.yInt = yInt;
 		return this;
@@ -193,14 +205,11 @@ g3.log = function(plot, data, options){
 	log.reDraw = function(data){
 
 		this.svg.transition()
-			.duration(500)
+			.duration(this.duration)
 			.attr('d', lineFunc(data))
 			.ease('linear');
-
 		return this;
 	}
-
-
 	return log;
 }
 
@@ -223,6 +232,7 @@ g3.plot = function(elem, options){
 	plot.x2Orient = 'bottom';
 	plot.yOrient = 'left';
 	plot.y2Orient = 'right';
+  plot.duration = 500;
 
 	if(options){
 	  if(options.margin){ plot.margin = options.margin; }
@@ -231,6 +241,11 @@ g3.plot = function(elem, options){
 	  if(options.xDomain){ plot.xDomain = options.xDomain; }
 	  if(options.yDomain){ plot.yDomain = options.yDomain; }
 	}
+
+  plot.setDuration = function(duration){
+    this.duration = duration;
+    return this;
+  }
 
   plot.setMargin = function(top, right, bottom, left){
   	this.margin = {top: top, right: right, bottom: bottom, left: left};
@@ -464,7 +479,7 @@ g3.plot = function(elem, options){
       this.xScale.domain(xDomain);
       this.svg.select('.x.axis')
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .call(this.xAxis)
         .ease('linear')
         .selectAll("text")  
@@ -476,7 +491,7 @@ g3.plot = function(elem, options){
       this.yScale.domain(yDomain);
       this.svg.select('.y.axis')
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .call(this.yAxis)
         .ease('linear');
     }
@@ -485,7 +500,7 @@ g3.plot = function(elem, options){
       this.x2Scale.domain(x2Domain);
       this.svg.select('.x2.axis')
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .call(this.x2Axis)
         .ease('linear')
         .selectAll("text")  
@@ -497,7 +512,7 @@ g3.plot = function(elem, options){
       this.y2Scale.domain(y2Domain);
       this.svg.select('.y2.axis')
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .call(this.y2Axis)
         .ease('linear');
     }
@@ -514,6 +529,7 @@ g3.seismic = function(plot, data, options){
 	seismic.gain = 1;
 	seismic.plot = plot;
 	seismic.data = data;
+	seismic.duration = 500;
 
   seismic.draw = function(){
 	seismic.color = d3.scale.linear()
@@ -586,6 +602,11 @@ g3.seismic = function(plot, data, options){
 		return this;
 	}
 
+	seismic.setDuration = function(duration){
+		this.duration = duration;
+		return this;
+	}
+
 	seismic.setMax = function(max){
 		this.max = max;
 		return this;
@@ -610,7 +631,9 @@ g3.wiggle = function(plot, data, options){
 	wiggle.xMin = plot.xDomain[0];
 	wiggle.yInt = 1;
 	wiggle.yMin = plot.yDomain[0];
+	wiggle.rand = Math.floor((Math.random() * 100) + 1);
 	wiggle.sampleRate = 1;
+	wiggle.duration = 500;
 
 	if(options){
 		if(options.skip){ wiggle.skip = options.skip; }
@@ -679,6 +702,11 @@ g3.wiggle = function(plot, data, options){
 		return this;
 	}
 
+	wiggle.setDuration = function(duration){
+		this.duration = duration;
+		return this;
+	}
+
 	wiggle.draw = function() {
 		for(var k = data.length - 1; k >= 0; k--){
 	    if(this.skip === 0 || k % this.skip === 0){
@@ -714,13 +742,13 @@ g3.wiggle = function(plot, data, options){
         plot.svg.datum(data[k]);
 
         plot.svg.append('clipPath')
-          .attr('id', 'clip-below' + k)
+          .attr('id', 'clip-below' + wiggle.rand + k)
           .append('path')
           .attr('d', area.x0(plot.width));
 
         plot.svg.append('path')
           .attr('id', 'area-below' + k)
-          .attr('clip-path', 'url(#clip-below' + k)
+          .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
           .attr('fill', 'grey')
           .attr('d', area.x0(function (d, i){ 
             return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
@@ -738,7 +766,7 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 		
 	plot.svg.select('.x.axis')
 		.transition()
-		.duration(500)
+		.duration(this.duration)
 		.call(plot.xAxis)
 		.selectAll("text")  
 		.style("text-anchor", "start")
@@ -746,14 +774,14 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
 	plot.svg.select('.y.axis')
 		.transition()
-		.duration(500)
+		.duration(this.duration)
 		.call(plot.yAxis);
 
   for(var k = data.length - 1; k >= 0; k--){
     if(this.skip === 0 || k % this.skip === 0){
 			var mean = d3.mean(data[k]); 
       
-      plot.svg.select("#clip-below" + k)
+      plot.svg.select("#clip-below" + wiggle.rand + k)
         .remove()
 
       // Line function
@@ -778,21 +806,21 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
       plot.svg.select(".line" + k)
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .attr('d', line(data[k]))
         .ease("linear");
 
       plot.svg.datum(data[k]);
 
       plot.svg.append('clipPath')
-        .attr('id', 'clip-below' + k)
+        .attr('id', 'clip-below' + wiggle.rand + k)
         .append('path')
         .attr('d', area.x0(plot.width));
         
       plot.svg.select("#area-below" + k)
-        .attr('clip-path', 'url(#clip-below' + k)
+        .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .attr('d', area.x0(function (d, i){ 
           return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
         }))

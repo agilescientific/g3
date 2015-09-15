@@ -9,6 +9,7 @@ g3.horizon = function(plot, data, options){
 	horizon.xMin = plot.xDomain[0];
 	horizon.yInt = 1;
 	horizon.yMin = plot.yDomain[0];
+	horizon.duration = 500;
 
 	if(options){
 		if(options.interpolate){ horizon.interpolate = options.interpolate; }
@@ -25,6 +26,11 @@ g3.horizon = function(plot, data, options){
 
 	horizon.setXMin = function(xMin){
 		this.xMin = xMin; 
+		return this;
+	}
+
+	horizon.setDuration = function(duration){
+		this.duration = duration;
 		return this;
 	}
 
@@ -46,7 +52,7 @@ g3.horizon = function(plot, data, options){
 		return this;
 	}
 
-	horizon.reDraw = function(){
+	horizon.reDraw = function(data){
 		var lineFunc = d3.svg.line()
 			.x(function (d, i) {
 				return plot.xScale(i + horizon.xMin);
@@ -57,7 +63,7 @@ g3.horizon = function(plot, data, options){
 			.interpolate(this.interpolate);
 		
 		this.svg.transition()
-			.duration(500)
+			.duration(this.duration)
 			.attr('d', lineFunc(data));
 		return this;
 	}

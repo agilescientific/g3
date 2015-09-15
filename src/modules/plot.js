@@ -17,6 +17,7 @@ g3.plot = function(elem, options){
 	plot.x2Orient = 'bottom';
 	plot.yOrient = 'left';
 	plot.y2Orient = 'right';
+  plot.duration = 500;
 
 	if(options){
 	  if(options.margin){ plot.margin = options.margin; }
@@ -25,6 +26,11 @@ g3.plot = function(elem, options){
 	  if(options.xDomain){ plot.xDomain = options.xDomain; }
 	  if(options.yDomain){ plot.yDomain = options.yDomain; }
 	}
+
+  plot.setDuration = function(duration){
+    this.duration = duration;
+    return this;
+  }
 
   plot.setMargin = function(top, right, bottom, left){
   	this.margin = {top: top, right: right, bottom: bottom, left: left};
@@ -258,7 +264,7 @@ g3.plot = function(elem, options){
       this.xScale.domain(xDomain);
       this.svg.select('.x.axis')
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .call(this.xAxis)
         .ease('linear')
         .selectAll("text")  
@@ -270,7 +276,7 @@ g3.plot = function(elem, options){
       this.yScale.domain(yDomain);
       this.svg.select('.y.axis')
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .call(this.yAxis)
         .ease('linear');
     }
@@ -279,7 +285,7 @@ g3.plot = function(elem, options){
       this.x2Scale.domain(x2Domain);
       this.svg.select('.x2.axis')
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .call(this.x2Axis)
         .ease('linear')
         .selectAll("text")  
@@ -291,7 +297,7 @@ g3.plot = function(elem, options){
       this.y2Scale.domain(y2Domain);
       this.svg.select('.y2.axis')
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .call(this.y2Axis)
         .ease('linear');
     }

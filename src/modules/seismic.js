@@ -7,6 +7,7 @@ g3.seismic = function(plot, data, options){
 	seismic.gain = 1;
 	seismic.plot = plot;
 	seismic.data = data;
+	seismic.duration = 500;
 
   seismic.draw = function(){
 	seismic.color = d3.scale.linear()
@@ -76,6 +77,11 @@ g3.seismic = function(plot, data, options){
 			}
 		}
 		seismic.context.putImageData(seismic.image, 0, 0);
+		return this;
+	}
+
+	seismic.setDuration = function(duration){
+		this.duration = duration;
 		return this;
 	}
 

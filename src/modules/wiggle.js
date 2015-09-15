@@ -10,7 +10,9 @@ g3.wiggle = function(plot, data, options){
 	wiggle.xMin = plot.xDomain[0];
 	wiggle.yInt = 1;
 	wiggle.yMin = plot.yDomain[0];
+	wiggle.rand = Math.floor((Math.random() * 100) + 1);
 	wiggle.sampleRate = 1;
+	wiggle.duration = 500;
 
 	if(options){
 		if(options.skip){ wiggle.skip = options.skip; }
@@ -79,6 +81,11 @@ g3.wiggle = function(plot, data, options){
 		return this;
 	}
 
+	wiggle.setDuration = function(duration){
+		this.duration = duration;
+		return this;
+	}
+
 	wiggle.draw = function() {
 		for(var k = data.length - 1; k >= 0; k--){
 	    if(this.skip === 0 || k % this.skip === 0){
@@ -114,13 +121,13 @@ g3.wiggle = function(plot, data, options){
         plot.svg.datum(data[k]);
 
         plot.svg.append('clipPath')
-          .attr('id', 'clip-below' + k)
+          .attr('id', 'clip-below' + wiggle.rand + k)
           .append('path')
           .attr('d', area.x0(plot.width));
 
         plot.svg.append('path')
           .attr('id', 'area-below' + k)
-          .attr('clip-path', 'url(#clip-below' + k)
+          .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
           .attr('fill', 'grey')
           .attr('d', area.x0(function (d, i){ 
             return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
@@ -138,7 +145,7 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 		
 	plot.svg.select('.x.axis')
 		.transition()
-		.duration(500)
+		.duration(this.duration)
 		.call(plot.xAxis)
 		.selectAll("text")  
 		.style("text-anchor", "start")
@@ -146,14 +153,14 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
 	plot.svg.select('.y.axis')
 		.transition()
-		.duration(500)
+		.duration(this.duration)
 		.call(plot.yAxis);
 
   for(var k = data.length - 1; k >= 0; k--){
     if(this.skip === 0 || k % this.skip === 0){
 			var mean = d3.mean(data[k]); 
       
-      plot.svg.select("#clip-below" + k)
+      plot.svg.select("#clip-below" + wiggle.rand + k)
         .remove()
 
       // Line function
@@ -178,21 +185,21 @@ wiggle.reDraw = function(data, xDomain, yDomain){
 
       plot.svg.select(".line" + k)
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .attr('d', line(data[k]))
         .ease("linear");
 
       plot.svg.datum(data[k]);
 
       plot.svg.append('clipPath')
-        .attr('id', 'clip-below' + k)
+        .attr('id', 'clip-below' + wiggle.rand + k)
         .append('path')
         .attr('d', area.x0(plot.width));
         
       plot.svg.select("#area-below" + k)
-        .attr('clip-path', 'url(#clip-below' + k)
+        .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
         .transition()
-        .duration(500)
+        .duration(this.duration)
         .attr('d', area.x0(function (d, i){ 
           return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
         }))

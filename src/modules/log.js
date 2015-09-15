@@ -9,6 +9,7 @@ g3.log = function(plot, data, options){
 	log.yInt = 1;
 	log.yMin = plot.yDomain[0];
 	log.color = "blue";
+	log.duration = 500;
 
 	if(options){
 		if(options.yInt){ log.yInt = options.zInt; }
@@ -18,6 +19,11 @@ g3.log = function(plot, data, options){
 	}
 
 	// Setters
+	log.setDuration = function(duration){
+		this.duration = duration;
+		return this;
+	}
+
 	log.setYInt = function(yInt){
 		this.yInt = yInt;
 		return this;
@@ -103,13 +109,10 @@ g3.log = function(plot, data, options){
 	log.reDraw = function(data){
 
 		this.svg.transition()
-			.duration(500)
+			.duration(this.duration)
 			.attr('d', lineFunc(data))
 			.ease('linear');
-
 		return this;
 	}
-
-
 	return log;
 }
