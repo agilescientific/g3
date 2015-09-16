@@ -190,10 +190,7 @@ g3.plot = function(elem, options){
 	  	this.xAxis.tickFormat(this.xTickFormat);
 	  	this.svg.append('g')
 	    	.attr('class', 'x axis')
-	    	.call(this.xAxis)
-	    	.selectAll("text")  
-	        .style("text-anchor", "start")
-	        .attr("transform", "rotate(-45)" );
+	    	.call(this.xAxis);
 	  }
 	  if(this.yAxisVisible){
 	  	this.yAxis = createAxis(this.yScale, -this.width, this.yOrient, this.yTicks);
@@ -211,10 +208,7 @@ g3.plot = function(elem, options){
 	  	this.svg.append('g')
 	    	.attr('class', 'x2 axis')
 		    .attr("transform", "translate(" + "0," + this.height + ")")
-	    	.call(this.x2Axis)
-	    	.selectAll("text")  
-	        .style("text-anchor", "start")
-	        .attr("transform", "rotate(45)" );
+	    	.call(this.x2Axis);
 	  }
 	 	if(this.y2AxisVisible){
 	 		this.y2Scale = d3.scale.linear()
@@ -266,10 +260,7 @@ g3.plot = function(elem, options){
         .transition()
         .duration(this.duration)
         .call(this.xAxis)
-        .ease('linear')
-        .selectAll("text")  
-          .style("text-anchor", "start")
-          .attr("transform", "rotate(-45)");
+        .ease('linear');
     }
 
     if(yDomain){
@@ -287,10 +278,7 @@ g3.plot = function(elem, options){
         .transition()
         .duration(this.duration)
         .call(this.x2Axis)
-        .ease('linear')
-        .selectAll("text")  
-          .style("text-anchor", "start")
-          .attr("transform", "rotate(45)");
+        .ease('linear');
     }
 
     if(y2Domain){
