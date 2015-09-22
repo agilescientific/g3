@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-09-16 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-09-22 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -21,7 +21,7 @@ function createAxis(scale, innerTickSize, orient, ticks){
 		.orient(orient)
 		.ticks(ticks);
 }
-g3.horizon = function(plot, data, options){
+g3.horizon = function(plot, data){
 
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
@@ -35,33 +35,25 @@ g3.horizon = function(plot, data, options){
 	horizon.duration = 500;
 	horizon.gain = 1;
 
-	if(options){
-		if(options.interpolate){ horizon.interpolate = options.interpolate; }
-		if(options.xInt){ horizon.xInt = options.xInt; }
-		if(options.xMin){ horizon.xMin = options.xMin; }
-		if(options.yInt){ horizon.yInt = options.yInt; }
-		if(options.yMin){ horizon.yMin = options.yMin; }
-	}
-
 	horizon.setInterpolate = function(interpolate){
 		this.interpolate = interpolate;
 		return this;
-	}
+	};
 
 	horizon.setXMin = function(xMin){
 		this.xMin = xMin; 
 		return this;
-	}
+	};
 
 	horizon.setDuration = function(duration){
 		this.duration = duration;
 		return this;
-	}
+	};
 
 	horizon.setGain = function(gain){
 		this.gain = gain;
 		return this;
-	}
+	};
 
 	horizon.draw = function(){
 		var lineFunc = d3.svg.line()
@@ -76,10 +68,10 @@ g3.horizon = function(plot, data, options){
 		this.svg = plot.svg.append('svg:path')
 			.attr('d', lineFunc(data))
 			.attr('stroke', 'green')
-			.attr('stroke-width', 1)
+			.attr('stroke-width', 1.5)
 			.attr('fill', 'none');
 		return this;
-	}
+	};
 
 	horizon.reDraw = function(data){
 		var lineFunc = d3.svg.line()
@@ -95,12 +87,12 @@ g3.horizon = function(plot, data, options){
 			.duration(this.duration)
 			.attr('d', lineFunc(data));
 		return this;
-	}
+	};
 
 	return horizon;
 };
 
-g3.log = function(plot, data, options){
+g3.log = function(plot, data){
 	
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
@@ -113,48 +105,41 @@ g3.log = function(plot, data, options){
 	log.color = "blue";
 	log.duration = 500;
 
-	if(options){
-		if(options.yInt){ log.yInt = options.zInt; }
-		if(options.yMin){ log.yMin = options.yMin; }
-		if(options.xInt){ log.xInt = options.xInt; }
-		if(options.xMin){ log.xMin = options.xMin; }
-	}
-
 	// Setters
 	log.setDuration = function(duration){
 		this.duration = duration;
 		return this;
-	}
+	};
 
 	log.setYInt = function(yInt){
 		this.yInt = yInt;
 		return this;
-	}
+	};
 
 	log.setYMin = function(yMin){
 		this.yMin = yMin;
 		return this;
-	}
+	};
 
 	log.setXInt = function(xInt){
 		this.xInt = xInt;
 		return this;
-	}
+	};
 
 	log.setXMin = function(xMin){
 		this.xMin = xMin;
 		return this;
-	}
+	};
 
 	log.setData = function(data){
 		this.data = data;
 		return this;
-	}
+	};
 
 	log.setColor = function(color){
 		this.color = color;
 		return this;
-	}
+	};
 
   log.draw = function(){
     this.svg = plot.svg.append("path")  
@@ -197,7 +182,7 @@ g3.log = function(plot, data, options){
     //   focus.select("text").text(d);
     // };
     return this;
-  }
+  };
 
 	var lineFunc = d3.svg.line()
 	.x(function (d) {
@@ -215,11 +200,11 @@ g3.log = function(plot, data, options){
 			.attr('d', lineFunc(data))
 			.ease('linear');
 		return this;
-	}
+	};
 	return log;
-}
+};
 
-g3.plot = function(elem, options){
+g3.plot = function(elem){
   
   if(!elem){ return 'Param: elem is missing. A div to attach to is required'; }
 
@@ -240,153 +225,145 @@ g3.plot = function(elem, options){
 	plot.y2Orient = 'right';
   plot.duration = 500;
 
-	if(options){
-	  if(options.margin){ plot.margin = options.margin; }
-	  if(options.width){ plot.width = options.width; }
-	  if(options.height){ plot.height = options.height; }
-	  if(options.xDomain){ plot.xDomain = options.xDomain; }
-	  if(options.yDomain){ plot.yDomain = options.yDomain; }
-	}
-
   plot.setDuration = function(duration){
     this.duration = duration;
     return this;
-  }
+  };
 
   plot.setMargin = function(top, right, bottom, left){
   	this.margin = {top: top, right: right, bottom: bottom, left: left};
   	return this;
-  }
+  };
 
   plot.setWidth = function(width){
   	this.width = width;
   	return this;
-  }
+  };
 
   plot.setHeight = function(height){
   	this.height = height;
   	return this;
-  }
+  };
 
   plot.setXDomain = function(domain){
   	this.xDomain = domain;
   	return this;
-  }
+  };
 
   plot.setYDomain = function(domain){
   	this.yDomain = domain;
   	return this;
-  }
+  };
 
   plot.setX2Domain = function(domain){
   	this.x2Domain = domain;
   	return this;
-  }
+  };
 
   plot.setY2Domain = function(domain){
   	this.y2Domain = domain;
   	return this;
-  }
+  };
 
   plot.toggleXAxis = function(bool){
   	this.xAxisVisible = bool;
   	return this;
-  }
+  };
 
   plot.toggleX2Axis = function(bool){
   	this.x2AxisVisible = bool;
   	return this;
-  }
+  };
 
   plot.toggleYAxis = function(bool){
   	this.yAxisVisible = bool;
   	return this;
-  }
+  };
 
   plot.toggleY2Axis = function(bool){
   	this.y2AxisVisible = bool;
   	return this;
-  }
+  };
 
   plot.setXTicks = function(ticks){
   	this.xTicks = ticks;
   	return this;
-  }
+  };
 
   plot.setYTicks = function(ticks){
   	this.yTicks = ticks;
   	return this;
-  }
+  };
 
   plot.setX2Ticks = function(ticks){
   	this.x2Ticks = ticks;
   	return this;
-  }
+  };
 
   plot.setY2Ticks = function(ticks){
   	this.y2Ticks = ticks;
   	return this;
-  }
+  };
 
   plot.setYTitle = function(title){
   	this.yTitle = title;
   	return this;
-  }
+  };
 
   plot.setXTitle = function(title){
   	this.xTitle = title;
   	return this;
-  }
+  };
 
   plot.setY2Title = function(title){
   	this.y2Title = title;
   	return this;
-  }
+  };
 
   plot.setX2Title = function(title){
   	this.x2Title = title;
   	return this;
-  }
+  };
 
   plot.setXOrient = function(orient){
   	this.xOrient = orient;
   	return this;
-  }
+  };
 
   plot.setX2Orient = function(orient){
   	this.x2Orient = orient;
   	return this;
-  }
+  };
 
   plot.setYOrient = function(orient){
   	this.yOrient = orient;
   	return this;
-  }
+  };
 
   plot.sety2Orient = function(orient){
   	this.y2Orient = orient;
   	return this;
-  }
+  };
 
   plot.setXTickFormat = function(format){
   	this.xTickFormat = format;
   	return this;
-  }
+  };
   
   plot.setYTickFormat = function(format){
   	this.yTickFormat = format;
   	return this;
-  }
+  };
   
   plot.setX2TickFormat = function(format){
   	this.x2TickFormat = format;
   	return this;
-  }
+  };
 
   plot.setY2TickFormat = function(format){
   	this.y2TickFormat = format;
   	return this;
-  }
+  };
 
   plot.draw = function() {
 	  this.xScale = d3.scale.linear()
@@ -395,6 +372,9 @@ g3.plot = function(elem, options){
     this.yScale = d3.scale.linear()
     	.domain(this.yDomain)
     	.range([0, this.height]);
+
+    var innerWidth = this.width - this.margin.left - this.margin.right,
+    innerHeight = this.height - this.margin.top - this.margin.bottom;
 
 	  // Append svg object to dom element
 	  this.svg = d3.select(elem).append('svg')
@@ -443,20 +423,21 @@ g3.plot = function(elem, options){
 		    .call(this.y2Axis);
 	  }
 
-		if(this.xTitle){
+    if(this.xTitle){
       
       if(this.xTickFormat === ""){
         var margin = -10;
       } else {
         var margin = -30;
       }
-			this.svg.append("text")
-					.attr("x", (this.width) / 2)
-					.attr("y", margin)
-					.style("text-anchor", "middle")
-					.text(this.xTitle);
-		}
-		if(this.yTitle){
+      this.svg.append("text")
+          .attr("x", (this.width) / 2)
+          .attr("y", margin)
+          .style("text-anchor", "middle")
+          .style("font-size", 12)
+          .text(this.xTitle);
+    }
+    if(this.yTitle){
 
       if(this.yTickFormat === ""){
         var yMargin = -10;
@@ -464,13 +445,45 @@ g3.plot = function(elem, options){
         var yMargin = -40;
       }
 
-			this.svg.append("text")
-				.attr("transform", "rotate(-90)")
-				.attr("y", yMargin)
-				.attr("dy", "1em")
-				.style("text-anchor", "end")
-				.text(this.yTitle);
-		}
+      this.svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", yMargin)
+        .attr("dy", "1em")
+        .style("text-anchor", "end")
+        .style("font-size", 12)
+        .text(this.yTitle);
+    }
+    if(this.x2Title){
+      
+      if(this.x2TickFormat === ""){
+        var margin = 10;
+      } else {
+        var margin = 30;
+      }
+      this.svg.append("text")
+          .attr("transform", "translate(" + "0," + this.height + ")")
+        .attr("x", (this.width) / 2)
+          .attr("y", margin)
+          .style("text-anchor", "middle")
+          .style("font-size", 12)
+          .text(this.x2Title);
+    }
+    if(this.y2Title){
+
+      if(this.yTickFormat === ""){
+        var yMargin = -10;
+      } else {
+        var yMargin = -40;
+      }
+
+      this.svg.append("text")
+        .attr("transform", "translate(" + "0," + this.height + ")")
+        .attr("y", yMargin)
+        .attr("dy", "1em")
+        .style("text-anchor", "end")
+        .style("font-size", 12)
+        .text(this.y2Title);
+    }
 	  return this;
 	};
 
@@ -510,7 +523,7 @@ g3.plot = function(elem, options){
         .call(this.y2Axis)
         .ease('linear');
     }
-  }
+  };
 
 	return plot;
 }
@@ -526,9 +539,12 @@ g3.seismic = function(plot, data, options){
 	seismic.duration = 500;
 
   seismic.draw = function(){
-	seismic.color = d3.scale.linear()
+
+  	if(!seismic.color){
+		seismic.color = d3.scale.linear()
 		.domain([-this.max, 0, this.max])
 		.range(['#FF0000', '#FFF', '#0000FF']);
+	}
 
   	var elem = $(plot.elem);
     this.canvas = d3.select(plot.elem)
@@ -542,7 +558,7 @@ g3.seismic = function(plot, data, options){
       .style('left', plot.margin.left + 'px')
       .call(seismic.drawImage);
     return this;
-  }
+  };
 
 	seismic.reDraw = function(data){
 
@@ -575,7 +591,7 @@ g3.seismic = function(plot, data, options){
 		// Dump image to canvas
 		seismic.context.putImageData(image, 0, 0);
 	  return this;
-  }
+  };
 
 	seismic.drawImage = function(canvas){
 		seismic.context = canvas.node().getContext('2d');
@@ -594,22 +610,27 @@ g3.seismic = function(plot, data, options){
 		}
 		seismic.context.putImageData(seismic.image, 0, 0);
 		return this;
-	}
+	};
+
+	seismic.setColor = function(colorScale){
+		this.color = colorScale;
+		return this;
+	};
 
 	seismic.setDuration = function(duration){
 		this.duration = duration;
 		return this;
-	}
+	};
 
 	seismic.setMax = function(max){
 		this.max = max;
 		return this;
-	}	
+	};
 
 	seismic.setGain = function(gain){
 		this.gain = gain;
 		return this;
-	}
+	};
 
 	return seismic;
 }
@@ -629,77 +650,67 @@ g3.wiggle = function(plot, data, options){
 	wiggle.sampleRate = 1;
 	wiggle.duration = 500;
 
-	if(options){
-		if(options.skip){ wiggle.skip = options.skip; }
-		if(options.gain){ wiggle.gain = options.gain; }
-		if(options.xMin){ wiggle.xMin = options.xMin; }
-		if(options.xMin){ wiggle.xInt = options.xInt; }
-		if(options.yMin){ wiggle.yMin = options.yMin; }
-		if(options.yInt){ wiggle.yInt = options.yInt };
-		if(options.max){ wiggle.max = options.max; } // Add an OR case here
-	}
-
 	var s = wiggle.gain / wiggle.max;
 
 	wiggle.setSkip = function(skip){
 		this.skip = skip;
 		return this;
-	}
+	};
 
 	wiggle.setGain = function(gain){
 		this.gain = gain;
 		return this;
-	}
+	};
 
 	wiggle.setMax = function(max){
 		this.max = max;
 		return this;
-	}
+	};
 
 	wiggle.setXMin = function(xMin){
 		this.xMin = xMin;
 		return this;
-	}
+	};
 
 	wiggle.setYMin = function(yMin){
 		this.yMin = yMin;
 		return this;
-	}
+	};
 
 	wiggle.setXInt = function(xInt){
 		this.xInt = xInt;
 		return this;
-	}
+	};
 
 	wiggle.setYInt = function(yInt){
 		this.yInt = yInt;
 		return this;
-	}
+	};
 
 	wiggle.setFillColor = function(color){
 		this.fillColor = color;
 		return this;
-	}
+	};
 
 	wiggle.setColor = function(color){
 		this.color = color;
 		return this;
-	}
+	};
 
 	wiggle.setStrokeWidth = function(strokeWidth){
 		this.strokeWidth = strokeWidth;
 		return this;
-	}
+	};
 
 	wiggle.setSampleRate = function(sampleRate){
 		this.sampleRate = sampleRate;
 		return this;
-	}
+	};
 
 	wiggle.setDuration = function(duration){
 		this.duration = duration;
 		return this;
-	}
+	};
 
 	wiggle.draw = function() {
 		for(var k = data.length - 1; k >= 0; k--){
@@ -730,7 +741,7 @@ g3.wiggle = function(plot, data, options){
           .attr('class', 'line' + k)
           .attr('d', line(data[k]))
           .attr('stroke', 'black')
-          .attr('stroke-width', 0.25)
+          .attr('stroke-width', 0.50)
           .attr('fill', 'none');
 
         plot.svg.datum(data[k]);
@@ -743,86 +754,87 @@ g3.wiggle = function(plot, data, options){
         plot.svg.append('path')
           .attr('id', 'area-below' + k)
           .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
-          .attr('fill', 'grey')
+          .attr('fill', 'black')
+          .style('opacity', 0.4)
           .attr('d', area.x0(function (d, i){ 
             return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
           }));
 	    }
 	  }
 	  return this;
-	}
+	};
 
-wiggle.reDraw = function(data, xDomain, yDomain){
+	wiggle.reDraw = function(data, xDomain, yDomain){
 
-	// Redraw the Axis
-	plot.xScale.domain(xDomain);
-	plot.yScale.domain(yDomain);
-		
-	plot.svg.select('.x.axis')
-		.transition()
-		.duration(this.duration)
-		.call(plot.xAxis)
-		.selectAll("text")  
-		.style("text-anchor", "start")
-    	.attr("transform", "rotate(-45)" );
+		// Redraw the Axis
+		plot.xScale.domain(xDomain);
+		plot.yScale.domain(yDomain);
+			
+		plot.svg.select('.x.axis')
+			.transition()
+			.duration(this.duration)
+			.call(plot.xAxis)
+			.selectAll("text")  
+			.style("text-anchor", "start")
+	    	.attr("transform", "rotate(-45)" );
 
-	plot.svg.select('.y.axis')
-		.transition()
-		.duration(this.duration)
-		.call(plot.yAxis);
+		plot.svg.select('.y.axis')
+			.transition()
+			.duration(this.duration)
+			.call(plot.yAxis);
 
-  for(var k = data.length - 1; k >= 0; k--){
-    if(this.skip === 0 || k % this.skip === 0){
-			var mean = d3.mean(data[k]); 
-      
-      plot.svg.select("#clip-below" + wiggle.rand + k)
-        .remove()
+	  for(var k = data.length - 1; k >= 0; k--){
+	    if(this.skip === 0 || k % this.skip === 0){
+				var mean = d3.mean(data[k]); 
+	      
+	      plot.svg.select("#clip-below" + wiggle.rand + k)
+	        .remove()
 
-      // Line function
-      var line = d3.svg.area()
-        .interpolate('basis')
-        .x(function (d) {
-          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
-        })
-        .y(function (d, i){
-          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
-        });
+	      // Line function
+	      var line = d3.svg.area()
+	        .interpolate('basis')
+	        .x(function (d) {
+	          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+	        })
+	        .y(function (d, i){
+	          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+	        });
 
-      // Clip path area function
-      var area = d3.svg.area()
-        .interpolate('basis')
-        .x(function (d, i) {
-          return plot.xScale(mean * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
-        })
-        .y(function (d, i){
-          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
-        });
+	      // Clip path area function
+	      var area = d3.svg.area()
+	        .interpolate('basis')
+	        .x(function (d, i) {
+	          return plot.xScale(mean * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+	        })
+	        .y(function (d, i){
+	          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+	        });
 
-      plot.svg.select(".line" + k)
-        .transition()
-        .duration(this.duration)
-        .attr('d', line(data[k]))
-        .ease("linear");
+	      plot.svg.select(".line" + k)
+	        .transition()
+	        .duration(this.duration)
+	        .attr('d', line(data[k]))
+	        .ease("linear");
 
-      plot.svg.datum(data[k]);
+	      plot.svg.datum(data[k]);
 
-      plot.svg.append('clipPath')
-        .attr('id', 'clip-below' + wiggle.rand + k)
-        .append('path')
-        .attr('d', area.x0(plot.width));
-        
-      plot.svg.select("#area-below" + k)
-        .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
-        .transition()
-        .duration(this.duration)
-        .attr('d', area.x0(function (d, i){ 
-          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
-        }))
-        .ease('linear');
-    	} 
-  	}
+	      plot.svg.append('clipPath')
+	        .attr('id', 'clip-below' + wiggle.rand + k)
+	        .append('path')
+	        .attr('d', area.x0(plot.width));
+	        
+	      plot.svg.select("#area-below" + k)
+	        .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
+	        .transition()
+	        .duration(this.duration)
+	        .attr('d', area.x0(function (d, i){ 
+	          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+	        }))
+	        .ease('linear');
+	    	} 
+  		}
     return this;
-  }
+  };
 	return wiggle;
 };
 

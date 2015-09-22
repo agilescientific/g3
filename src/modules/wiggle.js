@@ -14,77 +14,67 @@ g3.wiggle = function(plot, data, options){
 	wiggle.sampleRate = 1;
 	wiggle.duration = 500;
 
-	if(options){
-		if(options.skip){ wiggle.skip = options.skip; }
-		if(options.gain){ wiggle.gain = options.gain; }
-		if(options.xMin){ wiggle.xMin = options.xMin; }
-		if(options.xMin){ wiggle.xInt = options.xInt; }
-		if(options.yMin){ wiggle.yMin = options.yMin; }
-		if(options.yInt){ wiggle.yInt = options.yInt };
-		if(options.max){ wiggle.max = options.max; } // Add an OR case here
-	}
-
 	var s = wiggle.gain / wiggle.max;
 
 	wiggle.setSkip = function(skip){
 		this.skip = skip;
 		return this;
-	}
+	};
 
 	wiggle.setGain = function(gain){
 		this.gain = gain;
 		return this;
-	}
+	};
 
 	wiggle.setMax = function(max){
 		this.max = max;
 		return this;
-	}
+	};
 
 	wiggle.setXMin = function(xMin){
 		this.xMin = xMin;
 		return this;
-	}
+	};
 
 	wiggle.setYMin = function(yMin){
 		this.yMin = yMin;
 		return this;
-	}
+	};
 
 	wiggle.setXInt = function(xInt){
 		this.xInt = xInt;
 		return this;
-	}
+	};
 
 	wiggle.setYInt = function(yInt){
 		this.yInt = yInt;
 		return this;
-	}
+	};
 
 	wiggle.setFillColor = function(color){
 		this.fillColor = color;
 		return this;
-	}
+	};
 
 	wiggle.setColor = function(color){
 		this.color = color;
 		return this;
-	}
+	};
 
 	wiggle.setStrokeWidth = function(strokeWidth){
 		this.strokeWidth = strokeWidth;
 		return this;
-	}
+	};
 
 	wiggle.setSampleRate = function(sampleRate){
 		this.sampleRate = sampleRate;
 		return this;
-	}
+	};
 
 	wiggle.setDuration = function(duration){
 		this.duration = duration;
 		return this;
-	}
+	};
 
 	wiggle.draw = function() {
 		for(var k = data.length - 1; k >= 0; k--){
@@ -115,7 +105,7 @@ g3.wiggle = function(plot, data, options){
           .attr('class', 'line' + k)
           .attr('d', line(data[k]))
           .attr('stroke', 'black')
-          .attr('stroke-width', 0.25)
+          .attr('stroke-width', 0.50)
           .attr('fill', 'none');
 
         plot.svg.datum(data[k]);
@@ -128,85 +118,86 @@ g3.wiggle = function(plot, data, options){
         plot.svg.append('path')
           .attr('id', 'area-below' + k)
           .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
-          .attr('fill', 'grey')
+          .attr('fill', 'black')
+          .style('opacity', 0.4)
           .attr('d', area.x0(function (d, i){ 
             return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
           }));
 	    }
 	  }
 	  return this;
-	}
+	};
 
-wiggle.reDraw = function(data, xDomain, yDomain){
+	wiggle.reDraw = function(data, xDomain, yDomain){
 
-	// Redraw the Axis
-	plot.xScale.domain(xDomain);
-	plot.yScale.domain(yDomain);
-		
-	plot.svg.select('.x.axis')
-		.transition()
-		.duration(this.duration)
-		.call(plot.xAxis)
-		.selectAll("text")  
-		.style("text-anchor", "start")
-    	.attr("transform", "rotate(-45)" );
+		// Redraw the Axis
+		plot.xScale.domain(xDomain);
+		plot.yScale.domain(yDomain);
+			
+		plot.svg.select('.x.axis')
+			.transition()
+			.duration(this.duration)
+			.call(plot.xAxis)
+			.selectAll("text")  
+			.style("text-anchor", "start")
+	    	.attr("transform", "rotate(-45)" );
 
-	plot.svg.select('.y.axis')
-		.transition()
-		.duration(this.duration)
-		.call(plot.yAxis);
+		plot.svg.select('.y.axis')
+			.transition()
+			.duration(this.duration)
+			.call(plot.yAxis);
 
-  for(var k = data.length - 1; k >= 0; k--){
-    if(this.skip === 0 || k % this.skip === 0){
-			var mean = d3.mean(data[k]); 
-      
-      plot.svg.select("#clip-below" + wiggle.rand + k)
-        .remove()
+	  for(var k = data.length - 1; k >= 0; k--){
+	    if(this.skip === 0 || k % this.skip === 0){
+				var mean = d3.mean(data[k]); 
+	      
+	      plot.svg.select("#clip-below" + wiggle.rand + k)
+	        .remove()
 
-      // Line function
-      var line = d3.svg.area()
-        .interpolate('basis')
-        .x(function (d) {
-          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
-        })
-        .y(function (d, i){
-          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
-        });
+	      // Line function
+	      var line = d3.svg.area()
+	        .interpolate('basis')
+	        .x(function (d) {
+	          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+	        })
+	        .y(function (d, i){
+	          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+	        });
 
-      // Clip path area function
-      var area = d3.svg.area()
-        .interpolate('basis')
-        .x(function (d, i) {
-          return plot.xScale(mean * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
-        })
-        .y(function (d, i){
-          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
-        });
+	      // Clip path area function
+	      var area = d3.svg.area()
+	        .interpolate('basis')
+	        .x(function (d, i) {
+	          return plot.xScale(mean * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+	        })
+	        .y(function (d, i){
+	          return plot.yScale(i * wiggle.yInt + wiggle.yMin);
+	        });
 
-      plot.svg.select(".line" + k)
-        .transition()
-        .duration(this.duration)
-        .attr('d', line(data[k]))
-        .ease("linear");
+	      plot.svg.select(".line" + k)
+	        .transition()
+	        .duration(this.duration)
+	        .attr('d', line(data[k]))
+	        .ease("linear");
 
-      plot.svg.datum(data[k]);
+	      plot.svg.datum(data[k]);
 
-      plot.svg.append('clipPath')
-        .attr('id', 'clip-below' + wiggle.rand + k)
-        .append('path')
-        .attr('d', area.x0(plot.width));
-        
-      plot.svg.select("#area-below" + k)
-        .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
-        .transition()
-        .duration(this.duration)
-        .attr('d', area.x0(function (d, i){ 
-          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
-        }))
-        .ease('linear');
-    	} 
-  	}
+	      plot.svg.append('clipPath')
+	        .attr('id', 'clip-below' + wiggle.rand + k)
+	        .append('path')
+	        .attr('d', area.x0(plot.width));
+	        
+	      plot.svg.select("#area-below" + k)
+	        .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
+	        .transition()
+	        .duration(this.duration)
+	        .attr('d', area.x0(function (d, i){ 
+	          return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+	        }))
+	        .ease('linear');
+	    	} 
+  		}
     return this;
-  }
+  };
 	return wiggle;
 };

@@ -10,9 +10,12 @@ g3.seismic = function(plot, data, options){
 	seismic.duration = 500;
 
   seismic.draw = function(){
-	seismic.color = d3.scale.linear()
+
+  	if(!seismic.color){
+		seismic.color = d3.scale.linear()
 		.domain([-this.max, 0, this.max])
 		.range(['#FF0000', '#FFF', '#0000FF']);
+	}
 
   	var elem = $(plot.elem);
     this.canvas = d3.select(plot.elem)
@@ -26,7 +29,7 @@ g3.seismic = function(plot, data, options){
       .style('left', plot.margin.left + 'px')
       .call(seismic.drawImage);
     return this;
-  }
+  };
 
 	seismic.reDraw = function(data){
 
@@ -59,7 +62,7 @@ g3.seismic = function(plot, data, options){
 		// Dump image to canvas
 		seismic.context.putImageData(image, 0, 0);
 	  return this;
-  }
+  };
 
 	seismic.drawImage = function(canvas){
 		seismic.context = canvas.node().getContext('2d');
@@ -78,22 +81,27 @@ g3.seismic = function(plot, data, options){
 		}
 		seismic.context.putImageData(seismic.image, 0, 0);
 		return this;
-	}
+	};
+
+	seismic.setColor = function(colorScale){
+		this.color = colorScale;
+		return this;
+	};
 
 	seismic.setDuration = function(duration){
 		this.duration = duration;
 		return this;
-	}
+	};
 
 	seismic.setMax = function(max){
 		this.max = max;
 		return this;
-	}	
+	};
 
 	seismic.setGain = function(gain){
 		this.gain = gain;
 		return this;
-	}
+	};
 
 	return seismic;
 }

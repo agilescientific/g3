@@ -1,4 +1,4 @@
-g3.horizon = function(plot, data, options){
+g3.horizon = function(plot, data){
 
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
@@ -12,33 +12,25 @@ g3.horizon = function(plot, data, options){
 	horizon.duration = 500;
 	horizon.gain = 1;
 
-	if(options){
-		if(options.interpolate){ horizon.interpolate = options.interpolate; }
-		if(options.xInt){ horizon.xInt = options.xInt; }
-		if(options.xMin){ horizon.xMin = options.xMin; }
-		if(options.yInt){ horizon.yInt = options.yInt; }
-		if(options.yMin){ horizon.yMin = options.yMin; }
-	}
-
 	horizon.setInterpolate = function(interpolate){
 		this.interpolate = interpolate;
 		return this;
-	}
+	};
 
 	horizon.setXMin = function(xMin){
 		this.xMin = xMin; 
 		return this;
-	}
+	};
 
 	horizon.setDuration = function(duration){
 		this.duration = duration;
 		return this;
-	}
+	};
 
 	horizon.setGain = function(gain){
 		this.gain = gain;
 		return this;
-	}
+	};
 
 	horizon.draw = function(){
 		var lineFunc = d3.svg.line()
@@ -53,10 +45,10 @@ g3.horizon = function(plot, data, options){
 		this.svg = plot.svg.append('svg:path')
 			.attr('d', lineFunc(data))
 			.attr('stroke', 'green')
-			.attr('stroke-width', 1)
+			.attr('stroke-width', 1.5)
 			.attr('fill', 'none');
 		return this;
-	}
+	};
 
 	horizon.reDraw = function(data){
 		var lineFunc = d3.svg.line()
@@ -72,7 +64,7 @@ g3.horizon = function(plot, data, options){
 			.duration(this.duration)
 			.attr('d', lineFunc(data));
 		return this;
-	}
+	};
 
 	return horizon;
 };

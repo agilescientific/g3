@@ -1,4 +1,4 @@
-g3.plot = function(elem, options){
+g3.plot = function(elem){
   
   if(!elem){ return 'Param: elem is missing. A div to attach to is required'; }
 
@@ -19,153 +19,145 @@ g3.plot = function(elem, options){
 	plot.y2Orient = 'right';
   plot.duration = 500;
 
-	if(options){
-	  if(options.margin){ plot.margin = options.margin; }
-	  if(options.width){ plot.width = options.width; }
-	  if(options.height){ plot.height = options.height; }
-	  if(options.xDomain){ plot.xDomain = options.xDomain; }
-	  if(options.yDomain){ plot.yDomain = options.yDomain; }
-	}
-
   plot.setDuration = function(duration){
     this.duration = duration;
     return this;
-  }
+  };
 
   plot.setMargin = function(top, right, bottom, left){
   	this.margin = {top: top, right: right, bottom: bottom, left: left};
   	return this;
-  }
+  };
 
   plot.setWidth = function(width){
   	this.width = width;
   	return this;
-  }
+  };
 
   plot.setHeight = function(height){
   	this.height = height;
   	return this;
-  }
+  };
 
   plot.setXDomain = function(domain){
   	this.xDomain = domain;
   	return this;
-  }
+  };
 
   plot.setYDomain = function(domain){
   	this.yDomain = domain;
   	return this;
-  }
+  };
 
   plot.setX2Domain = function(domain){
   	this.x2Domain = domain;
   	return this;
-  }
+  };
 
   plot.setY2Domain = function(domain){
   	this.y2Domain = domain;
   	return this;
-  }
+  };
 
   plot.toggleXAxis = function(bool){
   	this.xAxisVisible = bool;
   	return this;
-  }
+  };
 
   plot.toggleX2Axis = function(bool){
   	this.x2AxisVisible = bool;
   	return this;
-  }
+  };
 
   plot.toggleYAxis = function(bool){
   	this.yAxisVisible = bool;
   	return this;
-  }
+  };
 
   plot.toggleY2Axis = function(bool){
   	this.y2AxisVisible = bool;
   	return this;
-  }
+  };
 
   plot.setXTicks = function(ticks){
   	this.xTicks = ticks;
   	return this;
-  }
+  };
 
   plot.setYTicks = function(ticks){
   	this.yTicks = ticks;
   	return this;
-  }
+  };
 
   plot.setX2Ticks = function(ticks){
   	this.x2Ticks = ticks;
   	return this;
-  }
+  };
 
   plot.setY2Ticks = function(ticks){
   	this.y2Ticks = ticks;
   	return this;
-  }
+  };
 
   plot.setYTitle = function(title){
   	this.yTitle = title;
   	return this;
-  }
+  };
 
   plot.setXTitle = function(title){
   	this.xTitle = title;
   	return this;
-  }
+  };
 
   plot.setY2Title = function(title){
   	this.y2Title = title;
   	return this;
-  }
+  };
 
   plot.setX2Title = function(title){
   	this.x2Title = title;
   	return this;
-  }
+  };
 
   plot.setXOrient = function(orient){
   	this.xOrient = orient;
   	return this;
-  }
+  };
 
   plot.setX2Orient = function(orient){
   	this.x2Orient = orient;
   	return this;
-  }
+  };
 
   plot.setYOrient = function(orient){
   	this.yOrient = orient;
   	return this;
-  }
+  };
 
   plot.sety2Orient = function(orient){
   	this.y2Orient = orient;
   	return this;
-  }
+  };
 
   plot.setXTickFormat = function(format){
   	this.xTickFormat = format;
   	return this;
-  }
+  };
   
   plot.setYTickFormat = function(format){
   	this.yTickFormat = format;
   	return this;
-  }
+  };
   
   plot.setX2TickFormat = function(format){
   	this.x2TickFormat = format;
   	return this;
-  }
+  };
 
   plot.setY2TickFormat = function(format){
   	this.y2TickFormat = format;
   	return this;
-  }
+  };
 
   plot.draw = function() {
 	  this.xScale = d3.scale.linear()
@@ -174,6 +166,9 @@ g3.plot = function(elem, options){
     this.yScale = d3.scale.linear()
     	.domain(this.yDomain)
     	.range([0, this.height]);
+
+    var innerWidth = this.width - this.margin.left - this.margin.right,
+    innerHeight = this.height - this.margin.top - this.margin.bottom;
 
 	  // Append svg object to dom element
 	  this.svg = d3.select(elem).append('svg')
@@ -222,20 +217,21 @@ g3.plot = function(elem, options){
 		    .call(this.y2Axis);
 	  }
 
-		if(this.xTitle){
+    if(this.xTitle){
       
       if(this.xTickFormat === ""){
         var margin = -10;
       } else {
         var margin = -30;
       }
-			this.svg.append("text")
-					.attr("x", (this.width) / 2)
-					.attr("y", margin)
-					.style("text-anchor", "middle")
-					.text(this.xTitle);
-		}
-		if(this.yTitle){
+      this.svg.append("text")
+          .attr("x", (this.width) / 2)
+          .attr("y", margin)
+          .style("text-anchor", "middle")
+          .style("font-size", 12)
+          .text(this.xTitle);
+    }
+    if(this.yTitle){
 
       if(this.yTickFormat === ""){
         var yMargin = -10;
@@ -243,13 +239,45 @@ g3.plot = function(elem, options){
         var yMargin = -40;
       }
 
-			this.svg.append("text")
-				.attr("transform", "rotate(-90)")
-				.attr("y", yMargin)
-				.attr("dy", "1em")
-				.style("text-anchor", "end")
-				.text(this.yTitle);
-		}
+      this.svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", yMargin)
+        .attr("dy", "1em")
+        .style("text-anchor", "end")
+        .style("font-size", 12)
+        .text(this.yTitle);
+    }
+    if(this.x2Title){
+      
+      if(this.x2TickFormat === ""){
+        var margin = 10;
+      } else {
+        var margin = 30;
+      }
+      this.svg.append("text")
+          .attr("transform", "translate(" + "0," + this.height + ")")
+        .attr("x", (this.width) / 2)
+          .attr("y", margin)
+          .style("text-anchor", "middle")
+          .style("font-size", 12)
+          .text(this.x2Title);
+    }
+    if(this.y2Title){
+
+      if(this.yTickFormat === ""){
+        var yMargin = -10;
+      } else {
+        var yMargin = -40;
+      }
+
+      this.svg.append("text")
+        .attr("transform", "translate(" + "0," + this.height + ")")
+        .attr("y", yMargin)
+        .attr("dy", "1em")
+        .style("text-anchor", "end")
+        .style("font-size", 12)
+        .text(this.y2Title);
+    }
 	  return this;
 	};
 
@@ -289,7 +317,7 @@ g3.plot = function(elem, options){
         .call(this.y2Axis)
         .ease('linear');
     }
-  }
+  };
 
 	return plot;
 }
