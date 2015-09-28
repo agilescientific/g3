@@ -101,28 +101,28 @@ g3.wiggle = function(plot, data, options){
 		        return plot.yScale(i * wiggle.yInt + wiggle.yMin);
 		      });
 
+        plot.svg.datum(data[k]);
+
+        plot.svg.append('clipPath')
+          .attr('id', 'clip-below ' + wiggle.rand + k)
+          .append('path')
+          .attr('d', area.x0(plot.width));
+
+        plot.svg.append('path')
+          .attr('id', 'area-below' + k)
+          .attr('clip-path', 'url(#clip-below #' + wiggle.rand + k)
+          .attr('fill', 'black')
+          .style('opacity', 0.4)
+          .attr('d', area.x0(function (d, i){ 
+            return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
+          }));
+
         plot.svg.append('path')
           .attr('class', 'line' + k)
           .attr('d', line(data[k]))
           .attr('stroke', 'black')
           .attr('stroke-width', 0.50)
           .attr('fill', 'none');
-
-        plot.svg.datum(data[k]);
-
-        plot.svg.append('clipPath')
-          .attr('id', 'clip-below' + wiggle.rand + k)
-          .append('path')
-          .attr('d', area.x0(plot.width));
-
-        plot.svg.append('path')
-          .attr('id', 'area-below' + k)
-          .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
-          .attr('fill', 'black')
-          .style('opacity', 0.4)
-          .attr('d', area.x0(function (d, i){ 
-            return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
-          }));
 	    }
 	  }
 	  return this;
@@ -183,12 +183,12 @@ g3.wiggle = function(plot, data, options){
 	      plot.svg.datum(data[k]);
 
 	      plot.svg.append('clipPath')
-	        .attr('id', 'clip-below' + wiggle.rand + k)
+	        .attr('id', 'clip-below ' + wiggle.rand + k)
 	        .append('path')
 	        .attr('d', area.x0(plot.width));
 	        
 	      plot.svg.select("#area-below" + k)
-	        .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
+	        .attr('clip-path', 'url(#clip-below #' + wiggle.rand + k)
 	        .transition()
 	        .duration(this.duration)
 	        .attr('d', area.x0(function (d, i){ 

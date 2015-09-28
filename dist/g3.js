@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-09-22 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-09-28 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -737,13 +737,6 @@ g3.wiggle = function(plot, data, options){
 		        return plot.yScale(i * wiggle.yInt + wiggle.yMin);
 		      });
 
-        plot.svg.append('path')
-          .attr('class', 'line' + k)
-          .attr('d', line(data[k]))
-          .attr('stroke', 'black')
-          .attr('stroke-width', 0.50)
-          .attr('fill', 'none');
-
         plot.svg.datum(data[k]);
 
         plot.svg.append('clipPath')
@@ -759,6 +752,13 @@ g3.wiggle = function(plot, data, options){
           .attr('d', area.x0(function (d, i){ 
             return plot.xScale(d * wiggle.gain + wiggle.xMin + k * wiggle.sampleRate);
           }));
+
+        plot.svg.append('path')
+          .attr('class', 'line' + k)
+          .attr('d', line(data[k]))
+          .attr('stroke', 'black')
+          .attr('stroke-width', 0.50)
+          .attr('fill', 'none');
 	    }
 	  }
 	  return this;
