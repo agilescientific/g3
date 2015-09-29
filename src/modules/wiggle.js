@@ -104,13 +104,13 @@ g3.wiggle = function(plot, data, options){
         plot.svg.datum(data[k]);
 
         plot.svg.append('clipPath')
-          .attr('id', 'clip-below ' + wiggle.rand + k)
+          .attr('id', 'clip-below' + wiggle.rand + k)
           .append('path')
           .attr('d', area.x0(plot.width));
 
         plot.svg.append('path')
           .attr('id', 'area-below' + k)
-          .attr('clip-path', 'url(#clip-below #' + wiggle.rand + k)
+          .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
           .attr('fill', 'black')
           .style('opacity', 0.4)
           .attr('d', area.x0(function (d, i){ 
@@ -183,12 +183,12 @@ g3.wiggle = function(plot, data, options){
 	      plot.svg.datum(data[k]);
 
 	      plot.svg.append('clipPath')
-	        .attr('id', 'clip-below ' + wiggle.rand + k)
+	        .attr('id', 'clip-below' + wiggle.rand + k)
 	        .append('path')
 	        .attr('d', area.x0(plot.width));
 	        
 	      plot.svg.select("#area-below" + k)
-	        .attr('clip-path', 'url(#clip-below #' + wiggle.rand + k)
+	        .attr('clip-path', 'url(#clip-below' + wiggle.rand + k)
 	        .transition()
 	        .duration(this.duration)
 	        .attr('d', area.x0(function (d, i){ 

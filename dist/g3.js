@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-09-28 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-09-29 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -21,77 +21,117 @@ function createAxis(scale, innerTickSize, orient, ticks){
 		.orient(orient)
 		.ticks(ticks);
 }
-g3.horizon = function(plot, data){
 
+// Attach horizon creation function to g3
+g3.horizon = function(plot, data){
+  return new horizon(plot, data);
+}
+
+// Constructor
+// Only set variables that are set by items passed in, otherwise set using prototype
+var horizon = function horizon(plot, data){
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
-
-	var horizon = {};
-	horizon.interpolate = 'basis';
-	horizon.xInt = 1;
-	horizon.xMin = plot.xDomain[0];
-	horizon.yInt = 1;
-	horizon.yMin = plot.yDomain[0];
-	horizon.duration = 500;
-	horizon.gain = 1;
-
-	horizon.setInterpolate = function(interpolate){
-		this.interpolate = interpolate;
-		return this;
-	};
-
-	horizon.setXMin = function(xMin){
-		this.xMin = xMin; 
-		return this;
-	};
-
-	horizon.setDuration = function(duration){
-		this.duration = duration;
-		return this;
-	};
-
-	horizon.setGain = function(gain){
-		this.gain = gain;
-		return this;
-	};
-
-	horizon.draw = function(){
-		var lineFunc = d3.svg.line()
-			.x(function (d, i) {
-				return plot.xScale(i + horizon.xMin);
-			})
-			.y(function (d) {
-				return plot.yScale(d * horizon.gain);
-			})
-			.interpolate(this.interpolate);
-
-		this.svg = plot.svg.append('svg:path')
-			.attr('d', lineFunc(data))
-			.attr('stroke', 'green')
-			.attr('stroke-width', 1.5)
-			.attr('fill', 'none');
-		return this;
-	};
-
-	horizon.reDraw = function(data){
-		var lineFunc = d3.svg.line()
-			.x(function (d, i) {
-				return plot.xScale(i + horizon.xMin);
-			})
-			.y(function (d) {
-				return plot.yScale(d * horizon.gain);
-			})
-			.interpolate(this.interpolate);
-		
-		this.svg.transition()
-			.duration(this.duration)
-			.attr('d', lineFunc(data));
-		return this;
-	};
-
-	return horizon;
+  this._data = data;
+  this._plot = plot;
+  this._xMin = plot.xDomain[0];
+  this._yMin = plot.yDomain[0];
+  return this;
 };
 
+// Set remaining variables
+horizon.prototype._xInt = 1;
+horizon.prototype._yInt = 1;
+horizon.prototype._duration = 500;
+horizon.prototype._gain = 1;
+horizon.prototype._interpolate = 'basis';
+horizon.prototype._color = 'green';
+horizon.prototype._strokeWidth = 1.5;
+
+// Horizon Setting functions
+horizon.prototype.interpolate = function(interpolate){
+	this._interpolate = interpolate;
+	return this;
+};
+
+horizon.prototype.xMin = function(xMin){
+	this._xMin = xMin;
+	return this;
+};
+
+horizon.prototype.yMin = function(yMin){
+	this._yMin = yMin;
+	return this;
+};
+
+horizon.prototype.xInt = function(xInt){
+	this._xInt = xInt;
+	return this;
+};
+
+horizon.prototype.yInt = function(yInt){
+	this._yInt = yInt;
+	return this;
+};
+
+horizon.prototype.duration = function(duration){
+	this._duration = duration;
+	return this;
+};
+
+horizon.prototype.gain = function(gain){
+	this._gain = gain;
+	return this;
+};
+
+horizon.prototype.color = function(color){
+	this._color = color;
+	return this;
+};
+
+horizon.prototype.strokeWidth = function(strokeWidth){
+	this._strokeWidth = strokeWidth;
+	return this;
+};
+
+horizon.prototype.lineFunc = function(){
+	var plot = this._plot,
+	xMin = this._xMin,
+	gain = this._gain,
+	interpolate = this._interpolate;
+
+	var lineFunc = d3.svg.line()
+		.x(function (d, i){
+			return plot.xScale(i + xMin);
+		})
+		.y( function (d) {
+			return plot.yScale(d * gain);
+		})
+		.interpolate(interpolate);
+
+	return lineFunc;
+};
+
+// Horizon Drawing functions
+horizon.prototype.draw = function() {
+	var lineFunc = this.lineFunc();
+	this._svg = this._plot.svg.append('path')
+		.attr('d', lineFunc(this._data))
+		.attr('stroke', this._color)
+		.attr('stroke-width', this._strokeWidth)
+		.attr('fill', 'none');
+
+	return this;
+};
+
+horizon.prototype.reDraw = function(data){
+	var lineFunc = this.lineFunc();
+	
+	this._svg.transition()
+		.duration(this._duration)
+		.attr('d', lineFunc(data));
+	return this;
+};
 g3.log = function(plot, data){
 	
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
