@@ -1,107 +1,63 @@
-g3.seismic = function(plot, data, options){
+
+// Attach seismic creation function to g3
+g3.seismic = function(plot, data){
+  return new seismic(plot, data);
+};
+
+// Constructor
+// Only set variables that are set by items passed in, otherwise set using prototype
+var seismic = function seismic(plot, data){
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
-	
-	var seismic = {};
-	seismic.max = 1;
-	seismic.gain = 1;
-	seismic.plot = plot;
-	seismic.data = data;
-	seismic.duration = 500;
+  this._data = data;
+  this._plot = plot;
+  return this;
+};
 
-  seismic.draw = function(){
+// Set remaining variables
+seismic.prototype._max = 1;
+seismic.prototype._gain = 1;
+seismic.prototype._duration = 5;
 
-  	if(!seismic.color){
-		seismic.color = d3.scale.linear()
-		.domain([-this.max, 0, this.max])
-		.range(['#FF0000', '#FFF', '#0000FF']);
-	}
-
-  	var elem = $(plot.elem);
-    this.canvas = d3.select(plot.elem)
-      .append('canvas')
-      .attr('width', data.length)
-      .attr('height', data[0].length)
-      .style('width', plot.width +  'px')
-      .style('height', plot.height + 'px')
-      .style('opacity', 0.95)
-      .style('top', plot.margin.top + 'px')
-      .style('left', plot.margin.left + 'px')
-      .call(seismic.drawImage);
-    return this;
-  };
-
-	seismic.reDraw = function(data){
-
-  	// Update the Canvas Attributes
-  	seismic.canvas
-      .attr('width', data.length)
-      .attr('height', data[0].length)
-      .style('width', seismic.plot.width +  'px')
-      .style('height', seismic.plot.height + 'px');
-
-    // Wipe the old canvas, the new size can be different
-  	seismic.context.clearRect(0, 0, seismic.data.length, seismic.data[0].length);
-
-  	seismic.data = data;
-		var x = data.length,
-		y = data[0].length;
-		var image = seismic.context.createImageData(x,y);
-
-		// Paint the image
-		for(var i = 0, p = -1; i < y; ++ i){
-			for(var j = 0; j < x; ++j){
-				var c = d3.rgb(seismic.color(data[j][i] * seismic.gain));
-				image.data[++p] = c.r;
-				image.data[++p] = c.g;
-				image.data[++p] = c.b;
-				image.data[++p] = 255;
-			}
-		}
-
-		// Dump image to canvas
-		seismic.context.putImageData(image, 0, 0);
-	  return this;
-  };
-
-	seismic.drawImage = function(canvas){
-		seismic.context = canvas.node().getContext('2d');
-		var x = seismic.data.length,
-		y = seismic.data[0].length;
-		seismic.image = seismic.context.createImageData(x,y);
-
-		for(var i = 0, p = -1; i < y; ++ i){
-			for(var j = 0; j < x; ++j){
-				var c = d3.rgb(seismic.color(seismic.data[j][i] * seismic.gain));
-				seismic.image.data[++p] = c.r;
-				seismic.image.data[++p] = c.g;
-				seismic.image.data[++p] = c.b;
-				seismic.image.data[++p] = 255;
-			}
-		}
-		seismic.context.putImageData(seismic.image, 0, 0);
-		return this;
+// Default Color Scale
+if(seismic._colorScale === undefined){
+	seismic.prototype._colorScale = function(){
+		return d3.scale.linear()
+			.domain([-this._max, 0, this._max])
+			.range(['#FF0000', '#FFFFFF', '#0000FF']);
 	};
-
-	seismic.setColor = function(colorScale){
-		this.color = colorScale;
-		return this;
-	};
-
-	seismic.setDuration = function(duration){
-		this.duration = duration;
-		return this;
-	};
-
-	seismic.setMax = function(max){
-		this.max = max;
-		return this;
-	};
-
-	seismic.setGain = function(gain){
-		this.gain = gain;
-		return this;
-	};
-
-	return seismic;
 }
+
+// Setters
+seismic.prototype.colorScale = function(colorScale){
+	this._colorScale = colorScale;
+	return this;
+};
+
+seismic.prototype.duration = function(duration){
+	this._duration = duration;
+	return this;
+};
+
+seismic.prototype.gain = function(gain){
+	this._gain = gain;
+	return this;
+};
+
+seismic.prototype.max = function(max){
+	this._max = max;
+	return this;
+};
+
+// Draw method
+seismic.prototype.draw = function(){
+	this._canvas = g3.canvas(this._plot, this._data)
+		.gain(this._gain)
+		.colorScale(this._colorScale)
+		.draw();
+  return this;
+};
+
+seismic.prototype.reDraw = function(data){
+	this._canvas.reDraw(data);
+};

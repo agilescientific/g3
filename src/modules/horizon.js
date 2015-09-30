@@ -1,4 +1,3 @@
-
 // Attach horizon creation function to g3
 g3.horizon = function(plot, data){
   return new horizon(plot, data);
