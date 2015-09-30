@@ -72,9 +72,9 @@ horizon.prototype.strokeWidth = function(strokeWidth){
 
 horizon.prototype.lineFunc = function(){
 	var plot = this._plot,
-	xMin = this._xMin,
-	gain = this._gain,
-	interpolate = this._interpolate;
+			xMin = this._xMin,
+			gain = this._gain,
+			interpolate = this._interpolate;
 
 	var lineFunc = d3.svg.line()
 		.x(function (d, i){
