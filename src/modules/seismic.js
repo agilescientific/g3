@@ -30,21 +30,25 @@ if(seismic._colorScale === undefined){
 
 // Setters
 seismic.prototype.colorScale = function(colorScale){
+	if(colorScale === undefined){ return this._colorScale; }
 	this._colorScale = colorScale;
 	return this;
 };
 
 seismic.prototype.duration = function(duration){
+	if(duration === undefined){ return this._duration; }
 	this._duration = duration;
 	return this;
 };
 
 seismic.prototype.gain = function(gain){
+	if(gain === undefined){ return this._gain; }
 	this._gain = gain;
 	return this;
 };
 
 seismic.prototype.max = function(max){
+	if(max === undefined){ return this._max; }
 	this._max = max;
 	return this;
 };

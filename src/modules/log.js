@@ -25,36 +25,43 @@ log.prototype._strokeWidth = 0.25;
 
 // Setters 
 log.prototype.duration = function(duration){
+	if(duration === undefined){ return this._duration; }
 	this._duration = duration;
 	return this;
 };
 
 log.prototype.xMin = function(xMin){
+	if(xMin === undefined){ return this._xMin; }
 	this._xMin = xMin;
 	return this;
 };
 
 log.prototype.xInt = function(xInt){
+	if(xInt === undefined){ return this._xInt; }
 	this._xInt = xInt;
 	return this;
 };
 
 log.prototype.yMin = function(yMin){
+	if(yMin === undefined){ return this._yMin; }
 	this._yMin = yMin;
 	return this;
 };
 
 log.prototype.yInt = function(yInt){
+	if(yInt === undefined){ return this._yInt; }
 	this._yInt = yInt;
 	return this;
 };
 
 log.prototype.color = function(color){
+	if(color === undefined){ return this._color; }
 	this._color = color;
 	return this;
 };
 
 log.prototype.strokeWidth = function(strokeWidth){
+	if(strokeWidth === undefined){ return this._strokeWidth; }
 	this._strokeWidth = strokeWidth;
 	return this;
 };

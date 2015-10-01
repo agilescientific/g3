@@ -26,17 +26,20 @@ var canvas = function canvas(plot, data){
 canvas.prototype.style = {};
 
 canvas.prototype.style.opacity = function(opacity){
+	if(opacity === undefined){ return this._style._opacity; }
 	this._style._opacity = opacity;
 	this._canvas.style('opacity', opacity);
 	return this;
 };
 
 canvas.prototype.gain = function(gain){
+	if(gain === undefined){ return this._gain; }
 	this._gain = gain;
 	return this;
 };
 
 canvas.prototype.colorScale = function(colorScale){
+	if(colorScale === undefined){ return this._colorScale; }
 	this._colorScale = colorScale;
 	return this;
 };

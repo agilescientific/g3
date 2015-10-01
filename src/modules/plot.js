@@ -9,12 +9,12 @@ g3.plot = function(elem){
 var plot = function plot(elem){
   if(!elem){ return 'Param: elem is missing. A div to attach to is required'; }
   this._elem = elem;
+  this._margin = {top: 50, right: 0, bottom: 30, left: 0};
+  this._width = $(this._elem).width() - this._margin.left;
   return this;
 };
 
 //  Defaults
-plot.prototype._margin = {top: 50, right: 0, bottom: 30, left: 0};
-plot.prototype._width = $(this._elem).width() - this._margin.left;
 plot.prototype._height = 800;
 plot.prototype._xDomain = [0,0];
 plot.prototype._yDomain = [0,0];
@@ -26,173 +26,173 @@ plot.prototype._xOrient = 'top';
 plot.prototype._x2Orient = 'bottom';
 plot.prototype._yOrient = 'left';
 plot.prototype._y2Orient = 'right';
-plot.prototype._duration = 500;
+plot.prototype._duration = 5;
 
 // Setters
 plot.prototype.duration = function(duration){
-  if(duration === undefined){ return this._duration; };
+  if(duration === undefined){ return this._duration; }
   this._duration = duration;
   return this;
 };
 
 plot.prototype.margin = function(top, right, bottom, left){
-  if(top === undefined){ return this._margin; };
+  if(top === undefined){ return this._margin; }
 	this._margin = {top: top, right: right, bottom: bottom, left: left};
 	return this;
 };
 
 plot.prototype.width = function(width){
-  if(width === undefined){ return this._width; };
+  if(width === undefined){ return this._width; }
 	this._width = width;
 	return this;
 };
 
 plot.prototype.height = function(height){
-  if(height === undefined){ return this._height; };
+  if(height === undefined){ return this._height; }
 	this._height = height;
 	return this;
 };
 
 plot.prototype.xDomain = function(domain){
-  if(domain === undefined){ return this._xDomain; };
+  if(domain === undefined){ return this._xDomain; }
 	this._xDomain = domain;
 	return this;
 };
 
 plot.prototype.yDomain = function(domain){
-  if(domain === undefined){ return this._yDomain; };
+  if(domain === undefined){ return this._yDomain; }
 	this._yDomain = domain;
 	return this;
 };
 
 plot.prototype.y2Domain = function(domain){
-  if(domain === undefined){ return this._y2Domain; };
+  if(domain === undefined){ return this._y2Domain; }
 	this._x2Domain = domain;
 	return this;
 };
 
 plot.prototype.y2Domain = function(domain){
-  if(domain === undefined){ return this._y2Domain; };
+  if(domain === undefined){ return this._y2Domain; }
 	this._y2Domain = domain;
 	return this;
 };
 
 plot.prototype.toggleXAxis = function(bool){
-  if(bool === undefined){ return this._xAxisVisible; };
+  if(bool === undefined){ return this._xAxisVisible; }
 	this._xAxisVisible = bool;
 	return this;
 };
 
 plot.prototype.toggleX2Axis = function(bool){
-  if(bool === undefined){ return this._x2AxisVisible; };
+  if(bool === undefined){ return this._x2AxisVisible; }
 	this._x2AxisVisible = bool;
 	return this;
 };
 
 plot.prototype.toggleYAxis = function(bool){
-  if(bool === undefined){ return this._yAxisVisible; };
+  if(bool === undefined){ return this._yAxisVisible; }
 	this._yAxisVisible = bool;
 	return this;
 };
 
 plot.prototype.toggleY2Axis = function(bool){
-  if(bool === undefined){ return this._y2AxisVisible; };
+  if(bool === undefined){ return this._y2AxisVisible; }
 	this._y2AxisVisible = bool;
 	return this;
 };
 
 plot.prototype.xTicks = function(ticks){
-  if(ticks === undefined){ return this._xTicks; };
+  if(ticks === undefined){ return this._xTicks; }
 	this._xTicks = ticks;
 	return this;
 };
 
 plot.prototype.yTicks = function(ticks){
-  if(ticks === undefined){ return this._yTicks; };
+  if(ticks === undefined){ return this._yTicks; }
 	this._yTicks = ticks;
 	return this;
 };
 
 plot.prototype.x2Ticks = function(ticks){
-  if(ticks === undefined){ return this._x2Ticks; };
+  if(ticks === undefined){ return this._x2Ticks; }
 	this._x2Ticks = ticks;
 	return this;
 };
 
 plot.prototype.y2Ticks = function(ticks){
-  if(ticks === undefined){ return this._y2Ticks; };
+  if(ticks === undefined){ return this._y2Ticks; }
 	this._y2Ticks = ticks;
 	return this;
 };
 
 plot.prototype.xTitle = function(title){
-  if(title === undefined){ return this._yTitle; };
+  if(title === undefined){ return this._yTitle; }
 	this._xTitle = title;
 	return this;
 };
 
 plot.prototype.yTitle = function(title){
-  if(title === undefined){ return this._yTitle; };
+  if(title === undefined){ return this._yTitle; }
 	this._yTitle = title;
 	return this;
 };
 
 plot.prototype.y2Title = function(title){
-  if(title === undefined){ return this._y2Title; };
+  if(title === undefined){ return this._y2Title; }
 	this._y2Title = title;
 	return this;
 };
 
 plot.prototype.x2Title = function(title){
-  if(title === undefined){ return this._x2Title; };
+  if(title === undefined){ return this._x2Title; }
 	this._x2Title = title;
 	return this;
 };
 
 plot.prototype.xOrient = function(orient){
-  if(orient === undefined){ return this._xOrient; };
+  if(orient === undefined){ return this._xOrient; }
 	this._xOrient = orient;
 	return this;
 };
 
 plot.prototype.x2Orient = function(orient){
-  if(orient === undefined){ return this._x2Orient; };
+  if(orient === undefined){ return this._x2Orient; }
 	this._x2Orient = orient;
 	return this;
 };
 
 plot.prototype.yOrient = function(orient){
-  if(orient === undefined){ return this._yOrient; };
+  if(orient === undefined){ return this._yOrient; }
 	this._yOrient = orient;
 	return this;
 };
 
 plot.prototype.y2Orient = function(orient){
-  if(orient === undefined){ return this._y2Orient; };
+  if(orient === undefined){ return this._y2Orient; }
 	this._y2Orient = orient;
 	return this;
 };
 
 plot.prototype.xTickFormat = function(format){
-  if(format === undefined){ return this._xTickFormat; };
+  if(format === undefined){ return this._xTickFormat; }
 	this._xTickFormat = format;
 	return this;
 };
 
 plot.prototype.yTickFormat = function(format){
-  if(format === undefined){ return this._yTickFormat; };
+  if(format === undefined){ return this._yTickFormat; }
 	this._yTickFormat = format;
 	return this;
 };
 
 plot.prototype.x2TickFormat = function(format){
-  if(format === undefined){ return this._x2TickFormat; };
+  if(format === undefined){ return this._x2TickFormat; }
 	this._x2TickFormat = format;
 	return this;
 };
 
 plot.prototype.y2TickFormat = function(format){
-  if(format === undefined){ return this._y2TickFormat; };
+  if(format === undefined){ return this._y2TickFormat; }
 	this._y2TickFormat = format;
 	return this;
 };

@@ -26,46 +26,55 @@ horizon.prototype._strokeWidth = 1.5;
 
 // Horizon Setting functions
 horizon.prototype.interpolate = function(interpolate){
+	if(interpolate === undefined){ return this._interpolate; }
 	this._interpolate = interpolate;
 	return this;
 };
 
 horizon.prototype.xMin = function(xMin){
+	if(xMin === undefined){ return this._xMin; }
 	this._xMin = xMin;
 	return this;
 };
 
 horizon.prototype.yMin = function(yMin){
+	if(yMin === undefined){ return this._yMin; }
 	this._yMin = yMin;
 	return this;
 };
 
 horizon.prototype.xInt = function(xInt){
+	if(xInt === undefined){ return this._xInt; }
 	this._xInt = xInt;
 	return this;
 };
 
 horizon.prototype.yInt = function(yInt){
+	if(yInt === undefined){ return this._yInt; }
 	this._yInt = yInt;
 	return this;
 };
 
 horizon.prototype.duration = function(duration){
+	if(duration === undefined){ return this._duration; }
 	this._duration = duration;
 	return this;
 };
 
 horizon.prototype.gain = function(gain){
+	if(gain === undefined){ return this._gain; }
 	this._gain = gain;
 	return this;
 };
 
 horizon.prototype.color = function(color){
+	if(color === undefined){ return this._color; }
 	this._color = color;
 	return this;
 };
 
 horizon.prototype.strokeWidth = function(strokeWidth){
+	if(strokeWidth === undefined){ return this._strokeWidth; }
 	this._strokeWidth = strokeWidth;
 	return this;
 };
