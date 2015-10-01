@@ -1,3 +1,4 @@
+
 // Attach canvas creation function to g3
 g3.canvas = function(plot, data){
   return new canvas(plot, data);
@@ -22,7 +23,7 @@ var canvas = function canvas(plot, data){
   return this;
 };
 
-canvas.prototype._style = {};
+canvas.prototype.style = {};
 
 canvas.prototype.style.opacity = function(opacity){
 	this._style._opacity = opacity;
@@ -63,7 +64,7 @@ canvas.prototype.drawImage = function(){
 	
 	for(var i = 0, p = -1; i < y; ++ i){
 		for(var j = 0; j < x; ++j){
-			var c = d3.rgb(this.colorScale(this._data[j][i] * this._gain));
+			var c = d3.rgb(this._colorScale(this._data[j][i] * this._gain));
 			this._image.data[++p] = c.r;
 			this._image.data[++p] = c.g;
 			this._image.data[++p] = c.b;

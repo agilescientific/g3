@@ -1,7 +1,7 @@
 // Attach horizon creation function to g3
 g3.horizon = function(plot, data){
   return new horizon(plot, data);
-}
+};
 
 // Constructor
 // Only set variables that are set by items passed in, otherwise set using prototype
