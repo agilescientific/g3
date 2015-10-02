@@ -11,15 +11,15 @@ var canvas = function canvas(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
-  this._canvas = d3.select(this._plot.elem)
+  this._canvas = d3.select(this._plot._elem)
 		.append('canvas')
     .attr('width', this._data.length)
     .attr('height', this._data[0].length)
-    .style('width', this._plot.width +  'px')
-    .style('height', this._plot.height + 'px')
+    .style('width', this._plot._width +  'px')
+    .style('height', this._plot._height + 'px')
     .style('opacity', 0.95)
-    .style('top', this._plot.margin.top + 'px')
-    .style('left', this._plot.margin.left + 'px');
+    .style('top', this._plot._margin.top + 'px')
+    .style('left', this._plot._margin.left + 'px');
   return this;
 };
 

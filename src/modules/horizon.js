@@ -10,19 +10,20 @@ var horizon = function horizon(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
-  this._xMin = plot.xDomain[0];
-  this._yMin = plot.yDomain[0];
+  this._xMin = plot._xDomain[0];
+  this._yMin = plot._yDomain[0];
   return this;
 };
 
 // Set remaining variables
 horizon.prototype._xInt = 1;
 horizon.prototype._yInt = 1;
-horizon.prototype._duration = 500;
+horizon.prototype._duration = 5;
 horizon.prototype._gain = 1;
 horizon.prototype._interpolate = 'basis';
 horizon.prototype._color = 'green';
 horizon.prototype._strokeWidth = 1.5;
+horizon.prototype._opacity = 1;
 
 // Horizon Setting functions
 horizon.prototype.interpolate = function(interpolate){
@@ -79,6 +80,12 @@ horizon.prototype.strokeWidth = function(strokeWidth){
 	return this;
 };
 
+horizon.prototype.opacity = function(opacity){
+	if(opacity === undefined){ return this._opacity; }
+	this._opacity = opacity;
+	return this;
+};
+
 horizon.prototype.lineFunc = function(){
 	var plot = this._plot,
 			xMin = this._xMin,
@@ -87,10 +94,10 @@ horizon.prototype.lineFunc = function(){
 
 	var lineFunc = d3.svg.line()
 		.x(function (d, i){
-			return plot.xScale(i + xMin);
+			return plot._xScale(i + xMin);
 		})
 		.y( function (d) {
-			return plot.yScale(d * gain);
+			return plot._yScale(d * gain);
 		})
 		.interpolate(interpolate);
 
@@ -100,10 +107,11 @@ horizon.prototype.lineFunc = function(){
 // Horizon Drawing functions
 horizon.prototype.draw = function() {
 	var lineFunc = this.lineFunc();
-	this._svg = this._plot.svg.append('path')
+	this._svg = this._plot._svg.append('path')
 		.attr('d', lineFunc(this._data))
 		.attr('stroke', this._color)
 		.attr('stroke-width', this._strokeWidth)
+		.style('opacity', this._opacity)
 		.attr('fill', 'none');
 
 	return this;
