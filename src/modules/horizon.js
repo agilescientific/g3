@@ -86,6 +86,12 @@ horizon.prototype.opacity = function(opacity){
 	return this;
 };
 
+horizon.prototype.cursor = function(cursor){
+	if(cursor === undefined){ return this_cursor; }
+	this._cursor = cursor;
+	return this;
+};
+
 horizon.prototype.lineFunc = function(){
 	var plot = this._plot,
 			xMin = this._xMin,
@@ -113,6 +119,10 @@ horizon.prototype.draw = function() {
 		.attr('stroke-width', this._strokeWidth)
 		.style('opacity', this._opacity)
 		.attr('fill', 'none');
+
+	if(this._cursor){
+		this._svg.style('cursor', this._cursor);
+	}
 
 	return this;
 };
