@@ -63,5 +63,6 @@ seismic.prototype.draw = function(){
 };
 
 seismic.prototype.reDraw = function(data){
-	this._canvas.reDraw(data);
+	this._canvas.gain(this._gain)
+	.reDraw(data);
 };
