@@ -8,13 +8,14 @@ g3.plot = function(elem){
 var plot = function plot(elem){
   if(!elem){ return 'Param: elem is missing. A div to attach to is required'; }
   this._elem = elem;
-  this._margin = {top: 50, right: 0, bottom: 30, left: 0};
-  this._width = $(this._elem).width() - this._margin.left;
+  this._margin = {top: 30, right: 30, bottom: 30, left: 30};
+  this._width = $(this._elem).width() - this._margin.left - this._margin.right;
   return this;
 };
 
 //  Defaults
 plot.prototype._height = 800;
+// plot.prototype._margin = {top: 30, right: 30}
 plot.prototype._xDomain = [0,0];
 plot.prototype._yDomain = [0,0];
 plot.prototype._xAxisVisible = true;

@@ -17,17 +17,17 @@ var canvas = function canvas(plot, data){
     .attr('height', this._data[0].length)
     .style('width', this._plot._width +  'px')
     .style('height', this._plot._height + 'px')
-    .style('opacity', 0.95)
+    .style('opacity', this._opacity)
     .style('top', this._plot._margin.top + 'px')
-    .style('left', this._plot._margin.left + 'px');
+    .style('left', this._plot._margin.left + 15 + 'px');
   return this;
 };
 
-canvas.prototype.style = {};
+canvas.prototype._gain = 1;
 
-canvas.prototype.style.opacity = function(opacity){
-	if(opacity === undefined){ return this._style._opacity; }
-	this._style._opacity = opacity;
+canvas.prototype.opacity = function(opacity){
+	if(opacity === undefined){ return this._opacity; }
+	this._opacity = opacity;
 	this._canvas.style('opacity', opacity);
 	return this;
 };

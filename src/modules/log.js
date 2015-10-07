@@ -30,25 +30,25 @@ log.prototype.duration = function(duration){
 	return this;
 };
 
-log.prototype.xMin = function(xMin){
+log.prototype.xTrans = function(xMin){
 	if(xMin === undefined){ return this._xMin; }
 	this._xMin = xMin;
 	return this;
 };
 
-log.prototype.xInt = function(xInt){
+log.prototype.xMult = function(xInt){
 	if(xInt === undefined){ return this._xInt; }
 	this._xInt = xInt;
 	return this;
 };
 
-log.prototype.yMin = function(yMin){
+log.prototype.yTrans = function(yMin){
 	if(yMin === undefined){ return this._yMin; }
 	this._yMin = yMin;
 	return this;
 };
 
-log.prototype.yInt = function(yInt){
+log.prototype.yMult = function(yInt){
 	if(yInt === undefined){ return this._yInt; }
 	this._yInt = yInt;
 	return this;
@@ -90,14 +90,16 @@ log.prototype.lineFunc = function(){
 	var plot = this._plot,
 			yInt = this._yInt,
 			yMin = this._yMin,
+			xInt = this._xInt,
+			xMin = this._xMin,
 			interpolate = this._interpolate;
 
 	return d3.svg.line()
 		.x(function (d) {
-			return plot.xScale(d);
+			return plot._xScale(d * xInt + xMin);
 		})
 		.y(function (d, i){
-			return plot.yScale(i * yInt + yMin);
+			return plot._yScale(i * yInt + yMin);
 		})
 		.interpolate(interpolate);
 };

@@ -11,17 +11,16 @@ var wiggle = function wiggle(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
-  this._xMin = plot._xDomain[0];
-  this._yMin = plot._yDomain[0];
+  this._xTrans = plot._xDomain[0];
+  this._yTrans = plot._yDomain[0];
   this._rand = Math.floor((Math.random() * 100) + 100);
   return this;
 };
 
 // Set defaults
 wiggle.prototype._skip = 0;
-wiggle.prototype._gain = 30;
-wiggle.prototype._xInt = 1;
-wiggle.prototype._yInt = 1;
+wiggle.prototype._xMult = 1;
+wiggle.prototype._yMult = 1;
 wiggle.prototype._duration = 5;
 wiggle.prototype._sampleRate = 1;
 wiggle.prototype._strokeWidth = 0.5;
@@ -29,47 +28,33 @@ wiggle.prototype._color = 'black';
 wiggle.prototype._fillColor = 'black';
 wiggle.prototype._opacity = 0.4;
 
-//var s = wiggle.gain / wiggle.max;
-
 wiggle.prototype.skip = function(skip){
 	if(skip === undefined){ return this._skip; }
 	this._skip = skip;
 	return this;
 };
 
-wiggle.prototype.gain = function(gain){
-	if(gain === undefined){ return this._gain; }
-	this._gain = gain;
+wiggle.prototype.xTrans = function(xTrans){
+	if(xTrans === undefined){ return this._xTrans; }
+	this._xTrans = xTrans;
 	return this;
 };
 
-wiggle.prototype.max = function(max){
-	if(max === undefined){ return this._max; }
-	this._max = max;
+wiggle.prototype.yTrans = function(yTrans){
+	if(yTrans === undefined){ return this._yTrans; }
+	this._yTrans = yTrans;
 	return this;
 };
 
-wiggle.prototype.xMin = function(xMin){
-	if(xMin === undefined){ return this._xMin; }
-	this._xMin = xMin;
+wiggle.prototype.xMult = function(xMult){
+	if(xMult === undefined){ return this._xMult; }
+	this._xMult = xMult;
 	return this;
 };
 
-wiggle.prototype.yMin = function(yMin){
-	if(yMin === undefined){ return this._yMin; }
-	this._yMin = yMin;
-	return this;
-};
-
-wiggle.prototype.xInt = function(xInt){
-	if(xInt === undefined){ return this._xInt; }
-	this._xInt = xInt;
-	return this;
-};
-
-wiggle.prototype.yInt = function(yInt){
-	if(yInt === undefined){ return this._yInt; }
-	this._yInt = yInt;
+wiggle.prototype.yMult = function(yMult){
+	if(yMult === undefined){ return this._yMult; }
+	this._yMult = yMult;
 	return this;
 };
 
@@ -111,36 +96,36 @@ wiggle.prototype.opacity = function(opacity){
 
 wiggle.prototype.lineFunc = function(k){
 	var plot = this._plot,
-			gain = this._gain,
-			xMin = this._xMin,
+			xMult = this._xMult,
+			xTrans = this._xTrans,
 			sampleRate = this._sampleRate,
-			yInt = this._yInt,
-			yMin = this._yMin;
+			yMult = this._yMult,
+			yTrans = this._yTrans;
 
 	return d3.svg.area()
     .x(function (d) {
-      return plot._xScale(d * gain + xMin + k * sampleRate);
+      return plot._xScale(d * xMult + xTrans + k * sampleRate);
     })
     .y(function (d, i){
-      return plot._yScale(i * yInt + yMin);
+      return plot._yScale(i * yMult + yTrans);
     })
    	.interpolate('basis');
 };
 
 wiggle.prototype.areaFunc = function(k, mean){
 	var plot = this._plot,
-			gain = this._gain,
-			xMin = this._xMin,
+			xMult = this._xMult,
+			xTrans = this._xTrans,
 			sampleRate = this._sampleRate,
-			yMin = this._yMin,
-			yInt = this._yInt;
+			yTrans = this._yTrans,
+			yMult = this._yMult;
 
 	return d3.svg.area()
 	  .x(function (d, i) {
-	    return plot._xScale(mean * gain + xMin + k * sampleRate);
+	    return plot._xScale(mean * xMult + xTrans + k * sampleRate);
 	  })
 	  .y(function (d, i){
-	    return plot._yScale(i * yInt + yMin);
+	    return plot._yScale(i * yMult + yTrans);
 	  })
 	 	.interpolate('basis');
 };
@@ -162,8 +147,8 @@ wiggle.prototype.draw = function() {
         .attr('d', area.x0(this._plot._width));
 
       var plot = this._plot,
-      		gain = this._gain,
-      		xMin = this._xMin,
+      		xMult = this._xMult,
+      		xTrans = this._xTrans,
       		sampleRate = this._sampleRate;
 
       this._plot._svg.append('path')
@@ -172,7 +157,7 @@ wiggle.prototype.draw = function() {
         .attr('fill', this._fillColor)
         .style('opacity', this._opacity)
         .attr('d', area.x0(function (d, i){ 
-          return plot._xScale(d * gain + xMin + k * sampleRate);
+          return plot._xScale(d * xMult + xTrans + k * sampleRate);
         }));
 
       this._plot._svg.append('path')
@@ -229,8 +214,8 @@ wiggle.prototype.reDraw = function(data, xDomain, yDomain){
         .attr('d', area.x0(this._plot._width));
         
       var plot = this._plot,
-      		gain = this._gain,
-      		xMin = this._xMin,
+      		xMult = this._xMult,
+      		xTrans = this._xTrans,
       		sampleRate = this._sampleRate;
 
       this._plot._svg.select("#area-below" + k)
@@ -238,7 +223,7 @@ wiggle.prototype.reDraw = function(data, xDomain, yDomain){
         .transition()
         .duration(this._duration)
         .attr('d', area.x0(function (d, i){ 
-          return plot._xScale(d * gain + xMin + k * sampleRate);
+          return plot._xScale(d * xMult + xTrans + k * sampleRate);
         }))
         .ease('linear');
     	} 
