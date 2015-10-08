@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-10-07 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-10-08 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -26,6 +26,8 @@ var canvas = function canvas(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
+  var padding = $(this._plot._elem).css('padding-left');
+  padding = Number(padding.replace('px', ''));
   this._canvas = d3.select(this._plot._elem)
 		.append('canvas')
     .attr('width', this._data.length)
@@ -34,7 +36,7 @@ var canvas = function canvas(plot, data){
     .style('height', this._plot._height + 'px')
     .style('opacity', this._opacity)
     .style('top', this._plot._margin.top + 'px')
-    .style('left', this._plot._margin.left + 15 + 'px');
+    .style('left', this._plot._margin.left + padding + 'px');
   return this;
 };
 
@@ -401,8 +403,8 @@ var log = function log(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
-  this._xMin = plot._xDomain[0];
-  this._yMin = plot._yDomain[0];
+  this._xMin = 0;
+  this._yMin = 0;
   return this;
 };
 
@@ -928,22 +930,26 @@ plot.prototype.reDraw = function(xDomain, yDomain, x2Domain, y2Domain){
   if(x2Domain === undefined){
       x2Domain = xDomain;
   }
-  this._x2Scale.domain(x2Domain);
-  this._svg.select('.x2.axis')
-    .transition()
-    .duration(this._duration)
-    .call(this._x2Axis)
-    .ease('linear');
+  if(x2Domain){
+    this._x2Scale.domain(x2Domain);
+    this._svg.select('.x2.axis')
+      .transition()
+      .duration(this._duration)
+      .call(this._x2Axis)
+      .ease('linear');
+  }
 
   if(y2Domain === undefined){
     y2Domain = yDomain;
   }
-  this._y2Scale.domain(y2Domain);
-  this._svg.select('.y2.axis')
-    .transition()
-    .duration(this._duration)
-    .call(this._y2Axis)
-    .ease('linear');
+  if(y2Domain){
+    this._y2Scale.domain(y2Domain);
+    this._svg.select('.y2.axis')
+      .transition()
+      .duration(this._duration)
+      .call(this._y2Axis)
+      .ease('linear');
+  }
 };
 
 // Attach seismic creation function to g3
@@ -1196,9 +1202,7 @@ wiggle.prototype.reDraw = function(data, xDomain, yDomain){
 		.transition()
 		.duration(this._duration)
 		.call(this._plot._xAxis)
-		.selectAll("text")  
-		.style("text-anchor", "start")
-    	.attr("transform", "rotate(-45)" );
+		.selectAll("text");
 
 	this._plot._svg.select('.y.axis')
 		.transition()

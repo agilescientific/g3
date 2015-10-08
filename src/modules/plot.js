@@ -399,20 +399,24 @@ plot.prototype.reDraw = function(xDomain, yDomain, x2Domain, y2Domain){
   if(x2Domain === undefined){
       x2Domain = xDomain;
   }
-  this._x2Scale.domain(x2Domain);
-  this._svg.select('.x2.axis')
-    .transition()
-    .duration(this._duration)
-    .call(this._x2Axis)
-    .ease('linear');
+  if(x2Domain){
+    this._x2Scale.domain(x2Domain);
+    this._svg.select('.x2.axis')
+      .transition()
+      .duration(this._duration)
+      .call(this._x2Axis)
+      .ease('linear');
+  }
 
   if(y2Domain === undefined){
     y2Domain = yDomain;
   }
-  this._y2Scale.domain(y2Domain);
-  this._svg.select('.y2.axis')
-    .transition()
-    .duration(this._duration)
-    .call(this._y2Axis)
-    .ease('linear');
+  if(y2Domain){
+    this._y2Scale.domain(y2Domain);
+    this._svg.select('.y2.axis')
+      .transition()
+      .duration(this._duration)
+      .call(this._y2Axis)
+      .ease('linear');
+  }
 };

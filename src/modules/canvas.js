@@ -11,6 +11,8 @@ var canvas = function canvas(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
+  var padding = $(this._plot._elem).css('padding-left');
+  padding = Number(padding.replace('px', ''));
   this._canvas = d3.select(this._plot._elem)
 		.append('canvas')
     .attr('width', this._data.length)
@@ -19,7 +21,7 @@ var canvas = function canvas(plot, data){
     .style('height', this._plot._height + 'px')
     .style('opacity', this._opacity)
     .style('top', this._plot._margin.top + 'px')
-    .style('left', this._plot._margin.left + 15 + 'px');
+    .style('left', this._plot._margin.left + padding + 'px');
   return this;
 };
 

@@ -11,8 +11,8 @@ var log = function log(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
-  this._xMin = plot._xDomain[0];
-  this._yMin = plot._yDomain[0];
+  this._xMin = 0;
+  this._yMin = 0;
   return this;
 };
 

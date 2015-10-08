@@ -181,9 +181,7 @@ wiggle.prototype.reDraw = function(data, xDomain, yDomain){
 		.transition()
 		.duration(this._duration)
 		.call(this._plot._xAxis)
-		.selectAll("text")  
-		.style("text-anchor", "start")
-    	.attr("transform", "rotate(-45)" );
+		.selectAll("text");
 
 	this._plot._svg.select('.y.axis')
 		.transition()
