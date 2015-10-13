@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-10-08 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-10-13 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -1017,6 +1017,7 @@ seismic.prototype.draw = function(){
 
 seismic.prototype.reDraw = function(data){
 	this._canvas.gain(this._gain)
+	.colorScale(this._colorScale)
 	.reDraw(data);
 };
 

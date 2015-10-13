@@ -64,5 +64,6 @@ seismic.prototype.draw = function(){
 
 seismic.prototype.reDraw = function(data){
 	this._canvas.gain(this._gain)
+	.colorScale(this._colorScale)
 	.reDraw(data);
 };
