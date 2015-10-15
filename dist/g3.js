@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-10-13 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-10-15 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -391,14 +391,16 @@ horizon.prototype.reDraw = function(data){
 	return this;
 };
 
-// Attach canvas creation function to g3
-g3.log = function(plot, data){
-  return new log(plot, data);
+g3.log = {};
+
+// Attach line creation function to g3.log
+g3.log.line = function(plot, data){
+  return new line(plot, data);
 };
 
 // Constructor
 // Only set variables that are set by items passed in, otherwise set using prototype
-var log = function log(plot, data){
+var line = function line(plot, data){
 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
@@ -409,56 +411,56 @@ var log = function log(plot, data){
 };
 
 // Set remaining variables
-log.prototype._xInt = 1;
-log.prototype._yInt = 1;
-log.prototype._color = "blue";
-log.prototype._duration = 5;
-log.prototype._strokeWidth = 0.25;
+line.prototype._xInt = 1;
+line.prototype._yInt = 1;
+line.prototype._color = "blue";
+line.prototype._duration = 5;
+line.prototype._strokeWidth = 0.25;
 
 // Setters 
-log.prototype.duration = function(duration){
+line.prototype.duration = function(duration){
 	if(duration === undefined){ return this._duration; }
 	this._duration = duration;
 	return this;
 };
 
-log.prototype.xTrans = function(xMin){
+line.prototype.xTrans = function(xMin){
 	if(xMin === undefined){ return this._xMin; }
 	this._xMin = xMin;
 	return this;
 };
 
-log.prototype.xMult = function(xInt){
+line.prototype.xMult = function(xInt){
 	if(xInt === undefined){ return this._xInt; }
 	this._xInt = xInt;
 	return this;
 };
 
-log.prototype.yTrans = function(yMin){
+line.prototype.yTrans = function(yMin){
 	if(yMin === undefined){ return this._yMin; }
 	this._yMin = yMin;
 	return this;
 };
 
-log.prototype.yMult = function(yInt){
+line.prototype.yMult = function(yInt){
 	if(yInt === undefined){ return this._yInt; }
 	this._yInt = yInt;
 	return this;
 };
 
-log.prototype.color = function(color){
+line.prototype.color = function(color){
 	if(color === undefined){ return this._color; }
 	this._color = color;
 	return this;
 };
 
-log.prototype.strokeWidth = function(strokeWidth){
+line.prototype.strokeWidth = function(strokeWidth){
 	if(strokeWidth === undefined){ return this._strokeWidth; }
 	this._strokeWidth = strokeWidth;
 	return this;
 };
 
-log.prototype.draw = function(){
+line.prototype.draw = function(){
 	var lineFunc = this.lineFunc();
 	this._svg = this._plot._svg.append('path')
 		.datum(this._data)
@@ -469,7 +471,7 @@ log.prototype.draw = function(){
 	return this;
 };
 
-log.prototype.reDraw = function(data){
+line.prototype.reDraw = function(data){
 	var lineFunc = this.lineFunc();
 	this._svg.transition()
 		.duration(this._duration)
@@ -478,7 +480,7 @@ log.prototype.reDraw = function(data){
 	return this;
 };
 
-log.prototype.lineFunc = function(){
+line.prototype.lineFunc = function(){
 	var plot = this._plot,
 			yInt = this._yInt,
 			yMin = this._yMin,
@@ -529,6 +531,10 @@ log.prototype.lineFunc = function(){
 //   focus.select("text").text(d);
 // };
 
+
+g3.log.vd = function(){
+
+};
 // Attach horizon creation function to g3
 g3.plot = function(elem){
   return new plot(elem);
