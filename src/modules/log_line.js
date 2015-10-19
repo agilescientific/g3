@@ -11,14 +11,14 @@ var line = function line(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
-  this._xMin = 0;
-  this._yMin = 0;
+  this._xTrans = 0;
+  this._yTrans = 0;
   return this;
 };
 
 // Set remaining variables
-line.prototype._xInt = 1;
-line.prototype._yInt = 1;
+line.prototype._xTrans = 1;
+line.prototype._yTrans = 1;
 line.prototype._color = "blue";
 line.prototype._duration = 5;
 line.prototype._strokeWidth = 0.25;
@@ -30,27 +30,27 @@ line.prototype.duration = function(duration){
 	return this;
 };
 
-line.prototype.xTrans = function(xMin){
-	if(xMin === undefined){ return this._xMin; }
-	this._xMin = xMin;
+line.prototype.xTrans = function(xTrans){
+	if(xTrans === undefined){ return this._xTrans; }
+	this._xTrans = xTrans;
 	return this;
 };
 
-line.prototype.xMult = function(xInt){
-	if(xInt === undefined){ return this._xInt; }
-	this._xInt = xInt;
+line.prototype.xMult = function(xMult){
+	if(xMult === undefined){ return this._xMult; }
+	this._xMult = xMult;
 	return this;
 };
 
-line.prototype.yTrans = function(yMin){
-	if(yMin === undefined){ return this._yMin; }
-	this._yMin = yMin;
+line.prototype.yTrans = function(yTrans){
+	if(yTrans === undefined){ return this._yTrans; }
+	this._yTrans = yTrans;
 	return this;
 };
 
-line.prototype.yMult = function(yInt){
-	if(yInt === undefined){ return this._yInt; }
-	this._yInt = yInt;
+line.prototype.yMult = function(yMult){
+	if(yMult === undefined){ return this._yMult; }
+	this._yMult = yMult;
 	return this;
 };
 
@@ -88,51 +88,18 @@ line.prototype.reDraw = function(data){
 
 line.prototype.lineFunc = function(){
 	var plot = this._plot,
-			yInt = this._yInt,
-			yMin = this._yMin,
-			xInt = this._xInt,
-			xMin = this._xMin,
+			yMult = this._yMult,
+			yTrans = this._yTrans,
+			xMult = this._xMult,
+			xTrans = this._xTrans,
 			interpolate = this._interpolate;
 
 	return d3.svg.line()
 		.x(function (d) {
-			return plot._xScale(d * xInt + xMin);
+			return plot._xScale(d * xMult + xTrans);
 		})
 		.y(function (d, i){
-			return plot._yScale(i * yInt + yMin);
+			return plot._yScale(i * yMult + yTrans);
 		})
 		.interpolate(interpolate);
 };
-
-// var sorted = data.sort(function(a, b) {
-//   return a - b;
-// });
-
-// var focus = plot.svg.append("g")
-//     .attr("class", "focus")
-//     .style("display", "none");
-
-// focus.append("circle")
-//     .attr("r", 4.5);
-
-// focus.append("text")
-//     .attr("x", 9)
-//     .attr("dy", ".35em");
-//     var bisectDate = d3.bisector(function(d) { return d; }).left;
-// plot.svg.append("rect")
-//     .attr("class", "overlay")
-//     .attr("width", plot.width)
-//     .attr("height", plot.height)
-//     .on("mouseover", function() { focus.style("display", null); })
-//     .on("mouseout", function() { focus.style("display", "none"); })
-//     .on("mousemove", mousemove);
-
-// function mousemove() {
-//   var x0 = plot.xScale.invert(d3.mouse(this)[0]),
-//       i = bisectDate(data, x0, 1),
-//       d0 = data[i - 1],
-//       d1 = data[i],
-//       d = x0 - d0 > d1 - x0 ? d1 : d0;
-//   focus.attr("transform", "translate(" + plot.xScale(d) + "," + plot.yScale(d) + ")");
-//   focus.select("text").text(d);
-// };
