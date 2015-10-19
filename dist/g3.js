@@ -1,4 +1,4 @@
-/*! g3 - v0.0.1 - 2015-10-15 - justinkheisler */
+/*! g3 - v0.0.1 - 2015-10-19 - justinkheisler */
 'use strict';
 ;(function (window) {
 
@@ -30,8 +30,8 @@ var canvas = function canvas(plot, data){
   padding = Number(padding.replace('px', ''));
   this._canvas = d3.select(this._plot._elem)
 		.append('canvas')
-    .attr('width', this._data.length)
-    .attr('height', this._data[0].length)
+    .attr('width', this._data[0].length)
+    .attr('height', this._data[0][0].length)
     .style('width', this._plot._width +  'px')
     .style('height', this._plot._height + 'px')
     .style('opacity', this._opacity)
@@ -55,9 +55,9 @@ canvas.prototype.gain = function(gain){
 	return this;
 };
 
-canvas.prototype.colorScale = function(colorScale){
-	if(colorScale === undefined){ return this._colorScale; }
-	this._colorScale = colorScale;
+canvas.prototype.nDColorMap = function(nDColorMap){
+	if(nDColorMap === undefined){ return this._nDColorMap; }
+	this._nDColorMap = nDColorMap;
 	return this;
 };
 
@@ -68,26 +68,33 @@ canvas.prototype.draw = function(){
 };
 
 canvas.prototype.reDraw = function(data){
-	this._context.clearRect(0, 0, this._data.length, this._data[0].length);
+	this._context.clearRect(0, 0, this._data[0].length, this._data[0][0].length);
 	this._canvas
-    .attr('width', data.length)
-    .attr('height', data[0].length);
+    .attr('width', data[0].length)
+    .attr('height', data[0][0].length);
   this._data = data;
   this.drawImage();
   return this;
 };
 
 canvas.prototype.drawImage = function(){
-	var x = this._data.length,
-			y = this._data[0].length;
+	var x = this._data[0].length,
+			y = this._data[0][0].length;
 	this._image = this._context.createImageData(x,y);
 	
+	var r, g, b;
 	for(var i = 0, p = -1; i < y; ++ i){
 		for(var j = 0; j < x; ++j){
-			var c = d3.rgb(this._colorScale(this._data[j][i] * this._gain));
-			this._image.data[++p] = c.r;
-			this._image.data[++p] = c.g;
-			this._image.data[++p] = c.b;
+			r = 0, g = 0, b = 0;
+			for(var k = 0; k < this._data.length; k++){
+				var d = d3.rgb(this._nDColorMap[k](this._data[k][j][i]));
+				r = r + (d.r / 255);
+				g = g + (d.g / 255);
+				b = b + (d.b / 255);
+			}
+			this._image.data[++p] = r * 255;
+			this._image.data[++p] = g * 255;
+			this._image.data[++p] = b * 255;
 			this._image.data[++p] = 255;
 		}
 	}
@@ -405,14 +412,14 @@ var line = function line(plot, data){
 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._data = data;
   this._plot = plot;
-  this._xMin = 0;
-  this._yMin = 0;
+  this._xTrans = 0;
+  this._yTrans = 0;
   return this;
 };
 
 // Set remaining variables
-line.prototype._xInt = 1;
-line.prototype._yInt = 1;
+line.prototype._xTrans = 1;
+line.prototype._yTrans = 1;
 line.prototype._color = "blue";
 line.prototype._duration = 5;
 line.prototype._strokeWidth = 0.25;
@@ -424,27 +431,27 @@ line.prototype.duration = function(duration){
 	return this;
 };
 
-line.prototype.xTrans = function(xMin){
-	if(xMin === undefined){ return this._xMin; }
-	this._xMin = xMin;
+line.prototype.xTrans = function(xTrans){
+	if(xTrans === undefined){ return this._xTrans; }
+	this._xTrans = xTrans;
 	return this;
 };
 
-line.prototype.xMult = function(xInt){
-	if(xInt === undefined){ return this._xInt; }
-	this._xInt = xInt;
+line.prototype.xMult = function(xMult){
+	if(xMult === undefined){ return this._xMult; }
+	this._xMult = xMult;
 	return this;
 };
 
-line.prototype.yTrans = function(yMin){
-	if(yMin === undefined){ return this._yMin; }
-	this._yMin = yMin;
+line.prototype.yTrans = function(yTrans){
+	if(yTrans === undefined){ return this._yTrans; }
+	this._yTrans = yTrans;
 	return this;
 };
 
-line.prototype.yMult = function(yInt){
-	if(yInt === undefined){ return this._yInt; }
-	this._yInt = yInt;
+line.prototype.yMult = function(yMult){
+	if(yMult === undefined){ return this._yMult; }
+	this._yMult = yMult;
 	return this;
 };
 
@@ -482,59 +489,136 @@ line.prototype.reDraw = function(data){
 
 line.prototype.lineFunc = function(){
 	var plot = this._plot,
-			yInt = this._yInt,
-			yMin = this._yMin,
-			xInt = this._xInt,
-			xMin = this._xMin,
+			yMult = this._yMult,
+			yTrans = this._yTrans,
+			xMult = this._xMult,
+			xTrans = this._xTrans,
 			interpolate = this._interpolate;
 
 	return d3.svg.line()
 		.x(function (d) {
-			return plot._xScale(d * xInt + xMin);
+			return plot._xScale(d * xMult + xTrans);
 		})
 		.y(function (d, i){
-			return plot._yScale(i * yInt + yMin);
+			return plot._yScale(i * yMult + yTrans);
 		})
 		.interpolate(interpolate);
 };
 
-// var sorted = data.sort(function(a, b) {
-//   return a - b;
-// });
-
-// var focus = plot.svg.append("g")
-//     .attr("class", "focus")
-//     .style("display", "none");
-
-// focus.append("circle")
-//     .attr("r", 4.5);
-
-// focus.append("text")
-//     .attr("x", 9)
-//     .attr("dy", ".35em");
-//     var bisectDate = d3.bisector(function(d) { return d; }).left;
-// plot.svg.append("rect")
-//     .attr("class", "overlay")
-//     .attr("width", plot.width)
-//     .attr("height", plot.height)
-//     .on("mouseover", function() { focus.style("display", null); })
-//     .on("mouseout", function() { focus.style("display", "none"); })
-//     .on("mousemove", mousemove);
-
-// function mousemove() {
-//   var x0 = plot.xScale.invert(d3.mouse(this)[0]),
-//       i = bisectDate(data, x0, 1),
-//       d0 = data[i - 1],
-//       d1 = data[i],
-//       d = x0 - d0 > d1 - x0 ? d1 : d0;
-//   focus.attr("transform", "translate(" + plot.xScale(d) + "," + plot.yScale(d) + ")");
-//   focus.select("text").text(d);
+// // Attach vd creation function to g3.log
+// g3.log.vd = function(plot, data, data1){
+//   return new vd(plot, data);
 // };
 
+// // Constructor
+// // Only set variables that are set by items passed in, otherwise set using prototype
+// var vd = function vd(plot, data, data1){
+// 	if(!data || !$.isArray(data)){ return 'Param: data is missing, An array required'; }
+// 	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
+//   this._data = data;
+//   if(!data1){ this._data1 = data; }
+//   this._plot = plot;
+//   this._xTrans = 0;
+//   this._yTrans = 0;
+//   return this;
+// };
 
-g3.log.vd = function(){
+// // Set remaining variables
+// vd.prototype._xMult = 1;
+// vd.prototype._yMult = 1;
+// vd.prototype._duration = 5;
+// vd.prototype._strokeWidth = 0.25;
+// vd.prototype._barHeight = this._plot._height / (this._data1.length - 2);
+// vd.prototype._max = d3.max(this._data1);
 
-};
+// // Default Color Scale
+// if(vd._colorScale === undefined){
+// 	vd.prototype._colorScale = function(){
+// 		return d3.scale.linear()
+// 			.domain([-this._max, 0, this._max])
+// 			.range(['#FF0000', '#FFFFFF', '#0000FF']);
+// 	};
+// }
+
+// // Setters 
+// vd.prototype.duration = function(duration){
+// 	if(duration === undefined){ return this._duration; }
+// 	this._duration = duration;
+// 	return this;
+// };
+
+// vd.prototype.xTrans = function(xTrans){
+// 	if(xTrans === undefined){ return this._xTrans; }
+// 	this._xTrans = xTrans;
+// 	return this;
+// };
+
+// vd.prototype.xMult = function(xMult){
+// 	if(xMult === undefined){ return this._xMult; }
+// 	this._xMult = xMult;
+// 	return this;
+// };
+
+// vd.prototype.yTrans = function(yTrans){
+// 	if(yTrans === undefined){ return this._yTrans; }
+// 	this._yTrans = yTrans;
+// 	return this;
+// };
+
+// vd.prototype.yMult = function(yMult){
+// 	if(yMult === undefined){ return this._yMult; }
+// 	this._yMult = yMult;
+// 	return this;
+// };
+
+// vd.prototype.colorScale = function(color){
+// 	if(color === undefined){ return this._color; }
+// 	this._color = color;
+// 	return this;
+// };
+
+// vd.prototype.strokeWidth = function(strokeWidth){
+// 	if(strokeWidth === undefined){ return this._strokeWidth; }
+// 	this._strokeWidth = strokeWidth;
+// 	return this;
+// };
+
+// vd.prototype.barHeight = function(barHeight){
+// 	if(barHeight === undefined){ return this._barHeight; }
+// 	this._barHeight = barHeight;
+// 	return this;
+// };
+
+// vd.prototype.draw = function(){
+// 			var barHeight = 600 / (posdata.length - 2);
+// 			var bar = logPlot._svg.selectAll("rect")
+//       	.data(posdata.slice(0, posdata.length - 1))
+//     		.enter().append("rect")
+//       	.attr("transform", function(d, i) { return "translate(0," + (logPlot._yScale(i)) + ")"; })
+//       	.attr("width", function(d) { return logPlot._width; })
+//       	.attr("height", barHeight)
+//       	.attr('fill', function(d){ return colorScale(d);});
+
+//       var area = d3.svg.area()
+// 		    .x(function(d) { return logPlot._xScale(d); })
+// 		    .x1(logPlot._width)
+// 		    .y1(logPlot._height)
+// 		    .y(function(d, i) { return logPlot._yScale(i); });
+
+// 			logPlot._svg.append("path")
+// 			  .datum(arr2)
+// 			  .attr('transform', function(d, i) { return "translate(0," + logPlot._yScale(i) + ")";})
+// 			  .attr("class", "area")
+// 			  .attr("stroke", "black")
+// 			  .attr("stroke-width", 0.5)
+// 			  .attr("fill", 'white')
+// 			  .attr("d", area);
+// 	return this;
+// };
+
+// vd.prototype.reDraw = function(data){
+// 	return this;
+// };
 // Attach horizon creation function to g3
 g3.plot = function(elem){
   return new plot(elem);
@@ -978,19 +1062,10 @@ seismic.prototype._max = 1;
 seismic.prototype._gain = 1;
 seismic.prototype._duration = 5;
 
-// Default Color Scale
-if(seismic._colorScale === undefined){
-	seismic.prototype._colorScale = function(){
-		return d3.scale.linear()
-			.domain([-this._max, 0, this._max])
-			.range(['#FF0000', '#FFFFFF', '#0000FF']);
-	};
-}
-
 // Setters
-seismic.prototype.colorScale = function(colorScale){
-	if(colorScale === undefined){ return this._colorScale; }
-	this._colorScale = colorScale;
+seismic.prototype.nDColorMap = function(nDColorMap){
+	if(nDColorMap === undefined){ return this._nDColorMap; }
+	this._nDColorMap = nDColorMap;
 	return this;
 };
 
@@ -1016,14 +1091,14 @@ seismic.prototype.max = function(max){
 seismic.prototype.draw = function(){
 	this._canvas = g3.canvas(this._plot, this._data)
 		.gain(this._gain)
-		.colorScale(this._colorScale)
+		.nDColorMap(this._nDColorMap)
 		.draw();
   return this;
 };
 
 seismic.prototype.reDraw = function(data){
 	this._canvas.gain(this._gain)
-	.colorScale(this._colorScale)
+	.nDColorMap(this._nDColorMap)
 	.reDraw(data);
 };
 

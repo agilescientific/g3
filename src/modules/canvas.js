@@ -15,8 +15,8 @@ var canvas = function canvas(plot, data){
   padding = Number(padding.replace('px', ''));
   this._canvas = d3.select(this._plot._elem)
 		.append('canvas')
-    .attr('width', this._data.length)
-    .attr('height', this._data[0].length)
+    .attr('width', this._data[0].length)
+    .attr('height', this._data[0][0].length)
     .style('width', this._plot._width +  'px')
     .style('height', this._plot._height + 'px')
     .style('opacity', this._opacity)
@@ -40,9 +40,9 @@ canvas.prototype.gain = function(gain){
 	return this;
 };
 
-canvas.prototype.colorScale = function(colorScale){
-	if(colorScale === undefined){ return this._colorScale; }
-	this._colorScale = colorScale;
+canvas.prototype.nDColorMap = function(nDColorMap){
+	if(nDColorMap === undefined){ return this._nDColorMap; }
+	this._nDColorMap = nDColorMap;
 	return this;
 };
 
@@ -53,26 +53,33 @@ canvas.prototype.draw = function(){
 };
 
 canvas.prototype.reDraw = function(data){
-	this._context.clearRect(0, 0, this._data.length, this._data[0].length);
+	this._context.clearRect(0, 0, this._data[0].length, this._data[0][0].length);
 	this._canvas
-    .attr('width', data.length)
-    .attr('height', data[0].length);
+    .attr('width', data[0].length)
+    .attr('height', data[0][0].length);
   this._data = data;
   this.drawImage();
   return this;
 };
 
 canvas.prototype.drawImage = function(){
-	var x = this._data.length,
-			y = this._data[0].length;
+	var x = this._data[0].length,
+			y = this._data[0][0].length;
 	this._image = this._context.createImageData(x,y);
 	
+	var r, g, b;
 	for(var i = 0, p = -1; i < y; ++ i){
 		for(var j = 0; j < x; ++j){
-			var c = d3.rgb(this._colorScale(this._data[j][i] * this._gain));
-			this._image.data[++p] = c.r;
-			this._image.data[++p] = c.g;
-			this._image.data[++p] = c.b;
+			r = 0, g = 0, b = 0;
+			for(var k = 0; k < this._data.length; k++){
+				var d = d3.rgb(this._nDColorMap[k](this._data[k][j][i]));
+				r = r + (d.r / 255);
+				g = g + (d.g / 255);
+				b = b + (d.b / 255);
+			}
+			this._image.data[++p] = r * 255;
+			this._image.data[++p] = g * 255;
+			this._image.data[++p] = b * 255;
 			this._image.data[++p] = 255;
 		}
 	}

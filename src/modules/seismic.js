@@ -19,19 +19,10 @@ seismic.prototype._max = 1;
 seismic.prototype._gain = 1;
 seismic.prototype._duration = 5;
 
-// Default Color Scale
-if(seismic._colorScale === undefined){
-	seismic.prototype._colorScale = function(){
-		return d3.scale.linear()
-			.domain([-this._max, 0, this._max])
-			.range(['#FF0000', '#FFFFFF', '#0000FF']);
-	};
-}
-
 // Setters
-seismic.prototype.colorScale = function(colorScale){
-	if(colorScale === undefined){ return this._colorScale; }
-	this._colorScale = colorScale;
+seismic.prototype.nDColorMap = function(nDColorMap){
+	if(nDColorMap === undefined){ return this._nDColorMap; }
+	this._nDColorMap = nDColorMap;
 	return this;
 };
 
@@ -57,13 +48,13 @@ seismic.prototype.max = function(max){
 seismic.prototype.draw = function(){
 	this._canvas = g3.canvas(this._plot, this._data)
 		.gain(this._gain)
-		.colorScale(this._colorScale)
+		.nDColorMap(this._nDColorMap)
 		.draw();
   return this;
 };
 
 seismic.prototype.reDraw = function(data){
 	this._canvas.gain(this._gain)
-	.colorScale(this._colorScale)
+	.nDColorMap(this._nDColorMap)
 	.reDraw(data);
 };
