@@ -67,6 +67,11 @@ canvas.prototype.drawImage = function(){
 			y = this._data[0][0].length;
 	this._image = this._context.createImageData(x,y);
 	
+	if(this._data.length != this._nDColorMap.length){
+		alert("An equal number of data attributes and color bars is required");
+		return;
+	}
+
 	var r, g, b;
 	for(var i = 0, p = -1; i < y; ++ i){
 		for(var j = 0; j < x; ++j){
