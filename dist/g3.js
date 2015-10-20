@@ -108,6 +108,21 @@ canvas.prototype.drawImage = function(){
 	return this;
 };
 
+g3.colorScale = {
+	red_white_black: d3.scale.linear()
+		.domain([0, 1])
+		.range([d3.rgb(255, 0, 0), d3.rgb(255, 255, 255), d3.rgb(0, 0, 0)]),
+	red_white_blue: d3.scale.linear()
+		.domain([0, 1])
+		.range([d3.rgb(255, 0, 0), d3.rgb(255, 255, 255), d3.rgb(0, 0, 255)]),
+	greyscale: d3.scale.linear()
+		.domain([0, 1])
+		.range([d3.rgb(0, 0, 0), d3.rgb(127.5, 127.5, 127.5), d3.rgb(255, 255, 255)]),
+	seismic: d3.scale.linear()
+		.domain([0, 1])
+		.range([d3.rgb(0, 0, 76.5), d3.rgb(253, 253, 1.0), d3.rgb(127.5, 0, 0)])
+};
+
 g3.handle = {};
 
 g3.handle.line = function(plot, x, y, x2, y2){
@@ -117,21 +132,21 @@ g3.handle.line = function(plot, x, y, x2, y2){
 // Constructor
 // Only set variables that are set by items passed in, otherwise set using prototype
 var line = function line(plot, x, y, x2, y2){
-  if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
+	if(!plot){ return 'Param: plot is missing, a div to attach the svg is required'; }
   this._plot = plot;
   this._x = x;
   this._y = y;
 
   if(x2 === undefined){
-    this._x2 = x;
+  	this._x2 = x;
   } else {
-    this._x2 = x2;
+  	this._x2 = x2;
   }
 
   if(y2 === undefined){
-    this._y2 = y;
+  	this._y2 = y;
   } else {
-    this._y2 = y2;
+  	this._y2 = y2;
   }
   return this;
 };
@@ -143,65 +158,66 @@ line.prototype._opacity = 0;
 line.prototype._duration = 5;
 
 line.prototype.class = function(cl){
-  if(cl === undefined){ return this._class; }
-  this._class = cl;
-  return this;
+	if(cl === undefined){ return this._class; }
+	this._class = cl;
+	return this;
 };
 
 line.prototype.strokeWidth = function(strokeWidth){
-  if(strokeWidth === undefined){ return this._strokeWidth; }
-  this._strokeWidth = strokeWidth;
-  return this;
+	if(strokeWidth === undefined){ return this._strokeWidth; }
+	this._strokeWidth = strokeWidth;
+	return this;
 };
 
 line.prototype.stroke = function(color){
-  if(color === undefined){ return this._color; }
-  this._color = color;
-  return this;
+	if(color === undefined){ return this._color; }
+	this._color = color;
+	return this;
 };
 
 line.prototype.cursor = function(cursor){
-  if(cursor === undefined){ return this._cursor; }
-  this._cursor = cursor;
-  return this;
+	if(cursor === undefined){ return this._cursor; }
+	this._cursor = cursor;
+	return this;
 };
 
 line.prototype.opacity = function(opacity){
-  if(opacity === undefined){ return this._opacity; }
-  this._opacity = opacity;
-  return this;
+	if(opacity === undefined){ return this._opacity; }
+	this._opacity = opacity;
+	return this;
 };
 
 line.prototype.line = function(line){
-  if(line === undefined){ return this._line; }
-  this._line = line;
-  return this;
+	if(line === undefined){ return this._line; }
+	this._line = line;
+	return this;
 };
 
 line.prototype.draw = function(){
-  this._line = this._plot._svg.append('line')
-    .attr('class', this._class)
-    .style('stroke-width', this._strokeWidth)
-    .style('stroke', this._stroke)
-    .style('cursor', this._cursor)
-    .style('opacity', this._opacity)
-    .attr('x1', this._plot._xScale(this._x))
-    .attr('y1', this._plot._yScale(this._y))
-    .attr('x2', this._plot._xScale(this._x2))
-    .attr('y2', this._plot._yScale(this._y2));
-  return this;
+	this._line = this._plot._svg.append('line')
+		.attr('class', this._class)
+		.style('stroke-width', this._strokeWidth)
+		.style('stroke', this._stroke)
+		.style('cursor', this._cursor)
+		.style('opacity', this._opacity)
+		.attr('x1', this._plot._xScale(this._x))
+		.attr('y1', this._plot._yScale(this._y))
+		.attr('x2', this._plot._xScale(this._x2))
+		.attr('y2', this._plot._yScale(this._y2));
+	return this;
 };
 
 line.prototype.reDraw = function(x, y, x2, y2){
-  this._line
-    .transition()
-    .duration(this._duration)
-    .attr('x1', this._plot._xScale(x))
-    .attr('y1', this._plot._yScale(y))
-    .attr('x2', this._plot._xScale(x2))
-    .attr('y2', this._plot._yScale(y2));
-  return this;
+	this._line
+		.transition()
+		.duration(this._duration)
+		.attr('x1', this._plot._xScale(x))
+		.attr('y1', this._plot._yScale(y))
+		.attr('x2', this._plot._xScale(x2))
+		.attr('y2', this._plot._yScale(y2));
+	return this;
 };
+
 
 
 
