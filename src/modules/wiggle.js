@@ -107,7 +107,7 @@ wiggle.prototype.lineFunc = function(k){
       return plot._xScale(d * xMult + xTrans * k);
     })
     .y(function (d, i){
-      return plot._yScale(i * yMult + yTrans);
+      return plot._yScale(i * yMult / sampleRate + yTrans / sampleRate);
     })
    	.interpolate('basis');
 };
@@ -125,7 +125,7 @@ wiggle.prototype.areaFunc = function(k, mean){
 	    return plot._xScale(mean * xMult + xTrans * k);// * sampleRate);
 	  })
 	  .y(function (d, i){
-	    return plot._yScale(i * yMult + yTrans);
+	    return plot._yScale(i * yMult / sampleRate + yTrans/sampleRate);
 	  })
 	 	.interpolate('basis');
 };
