@@ -104,7 +104,7 @@ wiggle.prototype.lineFunc = function(k){
 
 	return d3.svg.area()
     .x(function (d) {
-      return plot._xScale(d * xMult + xTrans + k * sampleRate);
+      return plot._xScale(d * xMult + xTrans * k);
     })
     .y(function (d, i){
       return plot._yScale(i * yMult + yTrans);
@@ -122,7 +122,7 @@ wiggle.prototype.areaFunc = function(k, mean){
 
 	return d3.svg.area()
 	  .x(function (d, i) {
-	    return plot._xScale(mean * xMult + xTrans + k * sampleRate);
+	    return plot._xScale(mean * xMult + xTrans * k);// * sampleRate);
 	  })
 	  .y(function (d, i){
 	    return plot._yScale(i * yMult + yTrans);
@@ -157,7 +157,7 @@ wiggle.prototype.draw = function() {
         .attr('fill', this._fillColor)
         .style('opacity', this._opacity)
         .attr('d', area.x0(function (d, i){ 
-          return plot._xScale(d * xMult + xTrans + k * sampleRate);
+          return plot._xScale(d * xMult + xTrans * k);// * sampleRate);
         }));
 
       this._plot._svg.append('path')
@@ -221,7 +221,7 @@ wiggle.prototype.reDraw = function(data, xDomain, yDomain){
         .transition()
         .duration(this._duration)
         .attr('d', area.x0(function (d, i){ 
-          return plot._xScale(d * xMult + xTrans + k * sampleRate);
+          return plot._xScale(d * xMult + xTrans * k);// * sampleRate);
         }))
         .ease('linear');
     	} 
