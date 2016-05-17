@@ -14,6 +14,7 @@ var wiggle = function wiggle(plot, data){
   this._xTrans = plot._xDomain[0];
   this._yTrans = plot._yDomain[0];
   this._rand = Math.floor((Math.random() * 100) + 100);
+  this._offsets = plot._offsets;
   return this;
 };
 
@@ -27,6 +28,14 @@ wiggle.prototype._strokeWidth = 0.5;
 wiggle.prototype._color = 'black';
 wiggle.prototype._fillColor = 'black';
 wiggle.prototype._opacity = 0.4;
+
+wiggle.prototype.offsets = function(offsets) {
+    if(offsets === undefined) {return this._offsets;}
+    // check that offsets match the data
+    if(this._data.length === offsets.length) {this._offsets = offsets;}
+    else {console.log('**warning** number of offsets must match number of traces. `offsets` not set.');}
+    return this;
+}
 
 wiggle.prototype.skip = function(skip){
 	if(skip === undefined){ return this._skip; }
@@ -101,10 +110,12 @@ wiggle.prototype.lineFunc = function(k){
 			sampleRate = this._sampleRate,
 			yMult = this._yMult,
 			yTrans = this._yTrans;
+        var offset = this._offsets === undefined ? xTrans * k : this._offsets[k];
+        console.log('linefunc', offset)
 
 	return d3.svg.area()
     .x(function (d) {
-      return plot._xScale(d * xMult + xTrans * k);
+      return plot._xScale(d * xMult + offset);
     })
     .y(function (d, i){
       return plot._yScale(i * yMult / sampleRate + yTrans / sampleRate);
@@ -119,10 +130,11 @@ wiggle.prototype.areaFunc = function(k, mean){
 			sampleRate = this._sampleRate,
 			yTrans = this._yTrans,
 			yMult = this._yMult;
+        var offset = this._offsets === undefined ? xTrans * k : this._offsets[k];
 
 	return d3.svg.area()
 	  .x(function (d, i) {
-	    return plot._xScale(mean * xMult + xTrans * k);// * sampleRate);
+	    return plot._xScale(mean * xMult + offset);// * sampleRate);
 	  })
 	  .y(function (d, i){
 	    return plot._yScale(i * yMult / sampleRate + yTrans/sampleRate);
@@ -150,14 +162,14 @@ wiggle.prototype.draw = function() {
       		xMult = this._xMult,
       		xTrans = this._xTrans,
       		sampleRate = this._sampleRate;
-
+      var offset = this._offsets === undefined ? xTrans * k : this._offsets[k];
       this._plot._svg.append('path')
         .attr('id', 'area-below' + k)
         .attr('clip-path', 'url(#clip-below' + this._rand + k)
         .attr('fill', this._fillColor)
         .style('opacity', this._opacity)
         .attr('d', area.x0(function (d, i){ 
-          return plot._xScale(d * xMult + xTrans * k);// * sampleRate);
+          return plot._xScale(d * xMult + offset);// * sampleRate);
         }));
 
       this._plot._svg.append('path')
@@ -215,13 +227,14 @@ wiggle.prototype.reDraw = function(data, xDomain, yDomain){
       		xMult = this._xMult,
       		xTrans = this._xTrans,
       		sampleRate = this._sampleRate;
+      var offset = this._offsets === undefined ? xTrans * k :  this._offsets[k];
 
       this._plot._svg.select("#area-below" + k)
         .attr('clip-path', 'url(#clip-below' + this._rand + k)
         .transition()
         .duration(this._duration)
         .attr('d', area.x0(function (d, i){ 
-          return plot._xScale(d * xMult + xTrans * k);// * sampleRate);
+          return plot._xScale(d * xMult + offset);// * sampleRate);
         }))
         .ease('linear');
     	} 
