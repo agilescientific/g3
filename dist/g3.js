@@ -10,7 +10,7 @@ if(typeof(g3) === 'undefined') {
 	window.g3 = defineg3();
 }
 
-const DEBUG = false;
+var DEBUG = false;
 
 
 
